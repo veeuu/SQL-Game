@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut } from 'lucide-react';
+import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut, Play } from 'lucide-react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import axios from 'axios';
+
 import 'react-calendar-heatmap/dist/styles.css';
 import './Dashboard.css';
 
@@ -11,6 +12,7 @@ const Dashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100 });
   const [activity, setActivity] = useState([]);
+
 
   useEffect(() => {
     fetchProgress();
@@ -69,7 +71,7 @@ const Dashboard = ({ user, onLogout }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+            <div className="stat-icon" style={{ background: '#3b82f6' }}>
               <Target size={24} />
             </div>
             <div className="stat-info">
@@ -85,7 +87,7 @@ const Dashboard = ({ user, onLogout }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+            <div className="stat-icon" style={{ background: '#10b981' }}>
               <Trophy size={24} />
             </div>
             <div className="stat-info">
@@ -101,7 +103,7 @@ const Dashboard = ({ user, onLogout }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
+            <div className="stat-icon" style={{ background: '#3b82f6' }}>
               <Zap size={24} />
             </div>
             <div className="stat-info">
@@ -112,13 +114,19 @@ const Dashboard = ({ user, onLogout }) => {
         </div>
 
         <motion.div 
-          className="activity-section glass"
+          className="activity-section"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          <h3>📊 Your Progress Journey</h3>
-          <p className="activity-subtitle">Track your daily SQL mastery</p>
+          <div className="activity-header">
+            <div>
+              <h3>
+                {activity.reduce((sum, a) => sum + a.queries, 0)} queries solved in the last year
+              </h3>
+              <p className="activity-subtitle">Keep building your SQL skills every day</p>
+            </div>
+          </div>
           <div className="heatmap-container">
             <CalendarHeatmap
               startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
@@ -141,21 +149,26 @@ const Dashboard = ({ user, onLogout }) => {
             />
           </div>
           <div className="heatmap-legend">
-            <span>Less</span>
-            <div className="legend-boxes">
-              <div className="legend-box color-empty"></div>
-              <div className="legend-box color-scale-1"></div>
-              <div className="legend-box color-scale-2"></div>
-              <div className="legend-box color-scale-3"></div>
-              <div className="legend-box color-scale-4"></div>
+            <div className="legend-left">
+              <span>Learn how we count queries</span>
             </div>
-            <span>More</span>
+            <div className="legend-right">
+              <span>Less</span>
+              <div className="legend-boxes">
+                <div className="legend-box color-empty"></div>
+                <div className="legend-box color-scale-1"></div>
+                <div className="legend-box color-scale-2"></div>
+                <div className="legend-box color-scale-3"></div>
+                <div className="legend-box color-scale-4"></div>
+              </div>
+              <span>More</span>
+            </div>
           </div>
         </motion.div>
 
         <div className="action-grid">
           <motion.div 
-            className="action-card glass"
+            className="action-card glass primary-action"
             whileHover={{ scale: 1.05 }}
             onClick={() => navigate('/map')}
             initial={{ opacity: 0, x: -20 }}
@@ -163,8 +176,8 @@ const Dashboard = ({ user, onLogout }) => {
             transition={{ delay: 0.5 }}
           >
             <Map size={48} className="action-icon" />
-            <h3>Dungeon Map</h3>
-            <p>Explore levels and challenges</p>
+            <h3>Enter Dungeon</h3>
+            <p>Choose your level and game mode</p>
           </motion.div>
 
           <motion.div 
@@ -173,11 +186,11 @@ const Dashboard = ({ user, onLogout }) => {
             onClick={() => navigate('/mini-games')}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6 }}
+            transition={{ delay: 0.7 }}
           >
             <Gamepad2 size={48} className="action-icon" />
             <h3>Mini Games</h3>
-            <p>Earn bonus points</p>
+            <p>Earn bonus coins</p>
           </motion.div>
 
           <motion.div 
@@ -186,7 +199,7 @@ const Dashboard = ({ user, onLogout }) => {
             onClick={() => navigate('/profile')}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.7 }}
+            transition={{ delay: 0.8 }}
           >
             <User size={48} className="action-icon" />
             <h3>Profile</h3>
@@ -194,6 +207,8 @@ const Dashboard = ({ user, onLogout }) => {
           </motion.div>
         </div>
       </div>
+
+
     </div>
   );
 };
