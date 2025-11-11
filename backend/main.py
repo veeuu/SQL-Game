@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # Configure Gemini
-genai.configure(api_key="AIzaSyAM1qA3ayBq4pO7yXH-wDe1f_imx1MNmvQ")
+genai.configure(api_key="")
 gemini_model = genai.GenerativeModel('gemini-2.5-flash')
 
 SECRET_KEY = "sql-dungeon-secret-key-2024"
