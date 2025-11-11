@@ -1,0 +1,16 @@
+.gameplay-container {
+  min-height: 100vh;
+  padding: 40px;
+}
+
+.gameplay-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.gameplay-content {
+  padding: 40px;
+  min-height: 500px;
+}

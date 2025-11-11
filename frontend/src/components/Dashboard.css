@@ -1,0 +1,191 @@
+.dashboard-container {
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+.dashboard-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  margin-bottom: 40px;
+}
+
+.nav-brand h2 {
+  font-size: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #2d3748;
+  font-weight: 500;
+}
+
+.dashboard-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  cursor: pointer;
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.stat-info h3 {
+  font-size: 14px;
+  color: rgba(45, 55, 72, 0.7);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.activity-section {
+  padding: 32px;
+  margin-bottom: 40px;
+}
+
+.activity-section h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.activity-subtitle {
+  color: rgba(45, 55, 72, 0.7);
+  margin-bottom: 24px;
+}
+
+.heatmap-container {
+  margin: 24px 0;
+  padding: 20px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+}
+
+.react-calendar-heatmap {
+  width: 100%;
+}
+
+.react-calendar-heatmap text {
+  fill: rgba(45, 55, 72, 0.6);
+  font-size: 10px;
+}
+
+.react-calendar-heatmap .color-empty {
+  fill: rgba(102, 126, 234, 0.08);
+}
+
+.react-calendar-heatmap .color-scale-1 {
+  fill: #0e4429;
+}
+
+.react-calendar-heatmap .color-scale-2 {
+  fill: #006d32;
+}
+
+.react-calendar-heatmap .color-scale-3 {
+  fill: #26a641;
+}
+
+.react-calendar-heatmap .color-scale-4 {
+  fill: #39d353;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 12px;
+  color: rgba(45, 55, 72, 0.7);
+}
+
+.legend-boxes {
+  display: flex;
+  gap: 4px;
+}
+
+.legend-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.action-card {
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-icon {
+  color: #667eea;
+  margin-bottom: 16px;
+}
+
+.action-card h3 {
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+.action-card p {
+  color: rgba(45, 55, 72, 0.7);
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .dashboard-nav {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+  }
+  
+  .dashboard-content {
+    padding: 0 20px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+}

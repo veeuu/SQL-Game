@@ -1,0 +1,201 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut } from 'lucide-react';
+import CalendarHeatmap from 'react-calendar-heatmap';
+import axios from 'axios';
+import 'react-calendar-heatmap/dist/styles.css';
+import './Dashboard.css';
+
+const Dashboard = ({ user, onLogout }) => {
+  const navigate = useNavigate();
+  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100 });
+  const [activity, setActivity] = useState([]);
+
+  useEffect(() => {
+    fetchProgress();
+    fetchActivity();
+  }, []);
+
+  const fetchProgress = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/progress/${user.username}`);
+      setProgress(response.data);
+    } catch (error) {
+      console.error('Failed to fetch progress');
+    }
+  };
+
+  const fetchActivity = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/activity/${user.username}`);
+      setActivity(response.data);
+    } catch (error) {
+      console.error('Failed to fetch activity');
+    }
+  };
+
+  const getHeatmapData = () => {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setFullYear(startDate.getFullYear() - 1);
+    
+    return activity.map(a => ({
+      date: a.date,
+      count: a.queries
+    }));
+  };
+
+  return (
+    <div className="dashboard-container">
+      <nav className="dashboard-nav glass">
+        <div className="nav-brand">
+          <h2>🗝️ SQL Dungeon</h2>
+        </div>
+        <div className="nav-user">
+          <span>Welcome, {user.username}</span>
+          <button className="btn btn-secondary" onClick={onLogout}>
+            <LogOut size={16} /> Logout
+          </button>
+        </div>
+      </nav>
+
+      <div className="dashboard-content">
+        <div className="stats-grid">
+          <motion.div 
+            className="stat-card glass"
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+              <Target size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Current Level</h3>
+              <p className="stat-value">{progress.level}/8</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            className="stat-card glass"
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
+              <Trophy size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Total Score</h3>
+              <p className="stat-value">{progress.score}</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            className="stat-card glass"
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
+              <Zap size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Energy</h3>
+              <p className="stat-value">{progress.energy}/100</p>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div 
+          className="activity-section glass"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <h3>📊 Your Progress Journey</h3>
+          <p className="activity-subtitle">Track your daily SQL mastery</p>
+          <div className="heatmap-container">
+            <CalendarHeatmap
+              startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
+              endDate={new Date()}
+              values={getHeatmapData()}
+              classForValue={(value) => {
+                if (!value) return 'color-empty';
+                if (value.count < 3) return 'color-scale-1';
+                if (value.count < 6) return 'color-scale-2';
+                if (value.count < 10) return 'color-scale-3';
+                return 'color-scale-4';
+              }}
+              tooltipDataAttrs={(value) => {
+                return {
+                  'data-tip': value.date
+                    ? `${value.count} queries on ${value.date}`
+                    : 'No activity'
+                };
+              }}
+            />
+          </div>
+          <div className="heatmap-legend">
+            <span>Less</span>
+            <div className="legend-boxes">
+              <div className="legend-box color-empty"></div>
+              <div className="legend-box color-scale-1"></div>
+              <div className="legend-box color-scale-2"></div>
+              <div className="legend-box color-scale-3"></div>
+              <div className="legend-box color-scale-4"></div>
+            </div>
+            <span>More</span>
+          </div>
+        </motion.div>
+
+        <div className="action-grid">
+          <motion.div 
+            className="action-card glass"
+            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate('/map')}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <Map size={48} className="action-icon" />
+            <h3>Dungeon Map</h3>
+            <p>Explore levels and challenges</p>
+          </motion.div>
+
+          <motion.div 
+            className="action-card glass"
+            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate('/mini-games')}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6 }}
+          >
+            <Gamepad2 size={48} className="action-icon" />
+            <h3>Mini Games</h3>
+            <p>Earn bonus points</p>
+          </motion.div>
+
+          <motion.div 
+            className="action-card glass"
+            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate('/profile')}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.7 }}
+          >
+            <User size={48} className="action-icon" />
+            <h3>Profile</h3>
+            <p>View achievements</p>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
