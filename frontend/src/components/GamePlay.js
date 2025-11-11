@@ -72,10 +72,15 @@ const GamePlay = ({ user }) => {
   const getHint = () => {
     if (challenge && currentHintIndex < challenge.hints.length) {
       setShowHint(true);
-      toast.info(challenge.hints[currentHintIndex]);
+      toast(challenge.hints[currentHintIndex], {
+        icon: '💡',
+        duration: 5000,
+      });
       setCurrentHintIndex(currentHintIndex + 1);
     } else {
-      toast.info('No more hints available');
+      toast('No more hints available', {
+        icon: '🤷',
+      });
     }
   };
 

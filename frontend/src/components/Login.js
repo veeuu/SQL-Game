@@ -40,12 +40,6 @@ const Login = ({ onLogin }) => {
         transition={{ duration: 0.5 }}
       >
         <div className="login-header">
-          <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <Sword size={48} className="login-icon" />
-          </motion.div>
           <h1>SQL Escape</h1>
           <p>The Optimization Dungeon</p>
         </div>

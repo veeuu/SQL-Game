@@ -41,9 +41,9 @@
   min-height: 800px;
   background: linear-gradient(to bottom, 
     #86efac 0%, 
-    #86efac 40%,
-    #fde68a 40%,
-    #fde68a 100%
+    #6ee7b7 35%,
+    #fde68a 45%,
+    #fcd34d 100%
   );
   border-radius: 24px;
   border: 1px solid #e2e8f0;
@@ -52,21 +52,20 @@
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
-/* Decorative elements */
+/* Decorative elements - cleaner transition */
 .map-canvas::before {
   content: '';
   position: absolute;
-  bottom: 38%;
+  top: 38%;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 10%;
   background: linear-gradient(to bottom, 
-    rgba(134, 239, 172, 0) 0%,
-    rgba(134, 239, 172, 0.5) 50%,
-    rgba(253, 230, 138, 0.5) 50%,
-    rgba(253, 230, 138, 0) 100%
+    rgba(110, 231, 183, 0.8) 0%,
+    rgba(253, 230, 138, 0.8) 100%
   );
   z-index: 1;
+  pointer-events: none;
 }
 
 /* Decorative elements */
@@ -84,19 +83,19 @@
   50% { transform: translateY(-10px); }
 }
 
-/* Green zone decorations */
-.tree-1 { top: 15%; left: 10%; animation-delay: 0s; }
-.tree-2 { top: 25%; left: 75%; animation-delay: 0.5s; }
-.tree-3 { top: 35%; left: 15%; animation-delay: 1s; }
-.flower-1 { top: 20%; left: 85%; font-size: 24px; animation-delay: 0.3s; }
-.flower-2 { top: 30%; left: 5%; font-size: 24px; animation-delay: 0.7s; }
+/* Green zone decorations (top 40%) */
+.tree-1 { top: 8%; left: 10%; animation-delay: 0s; }
+.tree-2 { top: 18%; left: 75%; animation-delay: 0.5s; }
+.tree-3 { top: 28%; left: 15%; animation-delay: 1s; }
+.flower-1 { top: 12%; left: 85%; font-size: 24px; animation-delay: 0.3s; }
+.flower-2 { top: 22%; left: 5%; font-size: 24px; animation-delay: 0.7s; }
 
-/* Desert zone decorations */
-.cactus-1 { top: 50%; left: 12%; animation-delay: 0.2s; }
-.cactus-2 { top: 65%; left: 80%; animation-delay: 0.6s; }
-.cactus-3 { top: 80%; left: 20%; animation-delay: 0.9s; }
-.planet-1 { top: 55%; left: 88%; font-size: 28px; animation-delay: 0.4s; }
-.planet-2 { top: 75%; left: 8%; font-size: 24px; animation-delay: 0.8s; }
+/* Desert zone decorations (bottom 60%) */
+.cactus-1 { top: 55%; left: 12%; animation-delay: 0.2s; }
+.cactus-2 { top: 70%; left: 80%; animation-delay: 0.6s; }
+.cactus-3 { top: 85%; left: 20%; animation-delay: 0.9s; }
+.planet-1 { top: 60%; left: 88%; font-size: 28px; animation-delay: 0.4s; }
+.planet-2 { top: 78%; left: 8%; font-size: 24px; animation-delay: 0.8s; }
 
 /* Clouds */
 .cloud {

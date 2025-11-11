@@ -8,7 +8,7 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #f8fafc;
+  background: linear-gradient(to bottom, #ddd6fe 0%, #fae8ff 100%);
   color: #1e293b;
   min-height: 100vh;
   overflow-x: hidden;
@@ -16,7 +16,7 @@ body {
 
 .App {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(to bottom, #ddd6fe 0%, #fae8ff 50%, #fef3c7 100%);
 }
 
 /* Loading Screen */
@@ -25,14 +25,14 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
 }
 
 .loader {
-  width: 50px;
-  height: 50px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #3b82f6;
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -41,104 +41,125 @@ body {
   to { transform: rotate(360deg); }
 }
 
-/* Glass effect */
-.glass {
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
 
 /* Buttons */
 .btn {
-  padding: 12px 24px;
+  padding: 14px 28px;
   border: none;
-  border-radius: 12px;
-  font-weight: 600;
+  border-radius: 16px;
+  font-weight: 800;
   cursor: pointer;
-  transition: all 0.2s ease;
-  font-size: 14px;
+  transition: all 0.3s ease;
+  font-size: 15px;
   font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-transform: none;
+  letter-spacing: 0.3px;
 }
 
 .btn-primary {
-  background: #3b82f6;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
   color: white;
-  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 6px 16px rgba(168, 85, 247, 0.3);
+  border: none;
 }
 
 .btn-primary:hover {
-  background: #2563eb;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(168, 85, 247, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0px);
 }
 
 .btn-secondary {
   background: white;
   color: #64748b;
-  border: 1px solid #e2e8f0;
+  border: 3px solid #e2e8f0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
 }
 
 .btn-secondary:hover {
   background: #f8fafc;
-  border-color: #cbd5e1;
+  border-color: #a855f7;
+  color: #a855f7;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(168, 85, 247, 0.15);
 }
 
 .btn-success {
-  background: #10b981;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(16, 185, 129, 0.4);
 }
 
 .btn-danger {
-  background: #ef4444;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: white;
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.4);
 }
 
 /* Cards */
 .card {
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 24px;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  border: 4px solid #e2e8f0;
+  border-radius: 24px;
+  padding: 28px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  border-color: #cbd5e1;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(168, 85, 247, 0.15);
+  border-color: #a855f7;
 }
 
 /* Input Fields */
 .input-field {
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 18px;
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 3px solid #e2e8f0;
+  border-radius: 16px;
   color: #1e293b;
-  font-size: 14px;
+  font-size: 15px;
   font-family: 'Inter', sans-serif;
-  transition: all 0.2s ease;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #a855f7;
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1);
+  transform: translateY(-2px);
 }
 
 .input-field::placeholder {
   color: #94a3b8;
+  font-weight: 500;
 }
 
 /* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -147,35 +168,101 @@ body {
 }
 
 .fade-in {
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
   background: #f1f5f9;
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  border-radius: 6px;
+  border: 2px solid #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+}
+
+/* Selection */
+::selection {
+  background: #a855f7;
+  color: white;
+}
+
+::-moz-selection {
+  background: #a855f7;
+  color: white;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .card {
-    padding: 16px;
+    padding: 20px;
+    border-width: 3px;
   }
   
   .btn {
-    padding: 10px 20px;
-    font-size: 13px;
+    padding: 12px 24px;
+    font-size: 14px;
   }
+  
+  .input-field {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Utility Classes */
+.text-gradient {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.border-gradient {
+  border: 4px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #a855f7 0%, #ec4899 100%) border-box;
 }
