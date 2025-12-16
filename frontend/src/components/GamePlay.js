@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Play, Lightbulb, CheckCircle, XCircle, Zap, Trophy } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -9,6 +9,8 @@ import './GamePlay.css';
 const GamePlay = ({ user }) => {
   const { level } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const roomId = searchParams.get('room'); // Check if duo mode
   const [challenge, setChallenge] = useState(null);
   const [query, setQuery] = useState('');
   const [solutionType, setSolutionType] = useState('simple');
@@ -16,17 +18,35 @@ const GamePlay = ({ user }) => {
   const [loading, setLoading] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
+  const [isDuoMode, setIsDuoMode] = useState(false);
 
   useEffect(() => {
+    setIsDuoMode(!!roomId);
     fetchChallenge();
-  }, [level]);
+  }, [level, roomId]);
 
   const fetchChallenge = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/challenges');
-      const challenges = response.data.challenges;
-      const currentChallenge = challenges.find(c => c.level === parseInt(level));
-      setChallenge(currentChallenge);
+      if (roomId) {
+        // Duo mode: Fetch Gemini-generated challenge
+        const response = await axios.get(`http://localhost:8000/api/room/${roomId}/challenge`);
+        setChallenge({
+          level: response.data.level,
+          title: `Round ${response.data.round} Challenge`,
+          story: response.data.story,
+          objective: response.data.objective,
+          hints: response.data.hints || [],
+          difficulty: response.data.difficulty || 'medium',
+          points: 50,
+          coins: 10
+        });
+      } else {
+        // Solo mode: Fetch predefined challenges
+        const response = await axios.get('http://localhost:8000/api/challenges');
+        const challenges = response.data.challenges;
+        const currentChallenge = challenges.find(c => c.level === parseInt(level));
+        setChallenge(currentChallenge);
+      }
     } catch (error) {
       console.error('Failed to fetch challenge:', error);
       toast.error('Failed to load challenge');
@@ -42,12 +62,17 @@ const GamePlay = ({ user }) => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
+      
+      // Choose endpoint based on mode
+      const endpoint = roomId ? 'http://localhost:8000/api/duo/submit' : 'http://localhost:8000/api/submit-query';
+      
       const response = await axios.post(
-        'http://localhost:8000/api/submit-query',
+        endpoint,
         {
           query,
           level: parseInt(level),
-          solution_type: solutionType
+          solution_type: solutionType,
+          room_id: roomId || undefined
         },
         {
           headers: { 'Authorization': `Bearer ${token}` }
@@ -55,10 +80,15 @@ const GamePlay = ({ user }) => {
       );
 
       setResult(response.data);
-      if (response.data.success) {
-        toast.success(`✅ Query executed! +${response.data.points_earned} points`);
+      if (response.data.success || response.data.correct) {
+        const points = response.data.points_earned || 0;
+        if (roomId && response.data.is_winner) {
+          toast.success(`🏆 You won the round! +${points} points`);
+        } else {
+          toast.success(`✅ Correct! +${points} points`);
+        }
       } else {
-        toast.error('Query failed');
+        toast.error('Incorrect query. Try again!');
       }
     } catch (error) {
       console.error('Query error:', error);

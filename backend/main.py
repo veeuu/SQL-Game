@@ -410,6 +410,34 @@ def get_room(room_id: str):
         "status": room[5]
     }
 
+@app.get("/api/room/{room_id}/challenge")
+def get_room_challenge(room_id: str):
+    """Get the AI-generated challenge for the current round"""
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    c.execute("""SELECT level, current_round FROM rooms WHERE id = ?""", (room_id,))
+    room = c.fetchone()
+    conn.close()
+    
+    if not room:
+        raise HTTPException(status_code=404, detail="Room not found")
+    
+    level, current_round = room
+    
+    # Generate challenge using Gemini
+    from gemini_challenge_generator import generate_round_challenge
+    challenge = generate_round_challenge(level, current_round)
+    
+    return {
+        "level": level,
+        "round": current_round,
+        "story": challenge.get("story", ""),
+        "objective": challenge.get("objective", ""),
+        "hints": challenge.get("hints", []),
+        "difficulty": challenge.get("difficulty", "medium")
+    }
+
 @app.get("/api/challenges")
 def get_challenges():
     from challenges import CHALLENGES

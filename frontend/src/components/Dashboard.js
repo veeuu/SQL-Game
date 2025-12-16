@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut, Play } from 'lucide-react';
 import CalendarHeatmap from 'react-calendar-heatmap';
 import axios from 'axios';
+import ModeSelectionEntry from './ModeSelectionEntry';
 
 import 'react-calendar-heatmap/dist/styles.css';
 import './Dashboard.css';
@@ -12,6 +13,7 @@ const Dashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100 });
   const [activity, setActivity] = useState([]);
+  const [showModeSelection, setShowModeSelection] = useState(false);
 
 
   useEffect(() => {
@@ -170,14 +172,14 @@ const Dashboard = ({ user, onLogout }) => {
           <motion.div 
             className="action-card glass primary-action"
             whileHover={{ scale: 1.05 }}
-            onClick={() => navigate('/map')}
+            onClick={() => setShowModeSelection(true)}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
           >
             <Map size={48} className="action-icon" />
             <h3>Enter Dungeon</h3>
-            <p>Choose your level and game mode</p>
+            <p>Choose your battle mode</p>
           </motion.div>
 
           <motion.div 
@@ -208,7 +210,11 @@ const Dashboard = ({ user, onLogout }) => {
         </div>
       </div>
 
-
+      <AnimatePresence>
+        {showModeSelection && (
+          <ModeSelectionEntry onClose={() => setShowModeSelection(false)} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

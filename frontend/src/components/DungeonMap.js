@@ -56,8 +56,29 @@ const DungeonMap = ({ user }) => {
       toast.error('Complete previous levels to unlock this one!');
       return;
     }
-    setSelectedLevel(level);
-    setShowModeSelection(true);
+    
+    // Check if mode is already selected
+    const gameMode = sessionStorage.getItem('gameMode');
+    
+    if (gameMode === 'solo') {
+      // Solo mode: Go directly to gameplay, no mode selection
+      navigate(`/play/${level.id}`);
+    } else if (gameMode === 'duo') {
+      // Duo mode: Check if room already created
+      const duoRoomId = sessionStorage.getItem('duoRoomId');
+      if (duoRoomId) {
+        // Room already created, enter with room ID
+        navigate(`/play/${level.id}?room=${duoRoomId}`);
+      } else {
+        // No room yet, show mode selection (shouldn't happen)
+        setSelectedLevel(level);
+        setShowModeSelection(true);
+      }
+    } else {
+      // No mode selected, show mode selection
+      setSelectedLevel(level);
+      setShowModeSelection(true);
+    }
   };
 
   const createRoom = async (mode) => {
