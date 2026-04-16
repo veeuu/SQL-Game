@@ -52,7 +52,7 @@ const Dashboard = ({ user, onLogout }) => {
     activity.forEach(a => { map[a.date] = a.queries; });
 
     const days = [];
-    for (let i = days_to_show - 1; i >= 0; i--) {
+    for (let i = 0; i < days_to_show; i++) {
       const d = new Date();
       d.setDate(d.getDate() - i);
       const key = d.toISOString().split('T')[0];
@@ -60,6 +60,7 @@ const Dashboard = ({ user, onLogout }) => {
         date: key,
         label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         count: map[key] || 0,
+        dayIndex: i + 1,
       });
     }
     return days;
@@ -175,7 +176,7 @@ const Dashboard = ({ user, onLogout }) => {
                 style={{ background: getColor(day.count) }}
                 title={day.count > 0 ? `${day.count} queries on ${day.label}` : day.label}
               >
-                <span className="cell-day">{new Date(day.date + 'T00:00:00').getDate()}</span>
+                <span className="cell-day">{day.dayIndex}</span>
                 {day.count > 0 && <span className="cell-count">{day.count}</span>}
               </div>
             ))}
