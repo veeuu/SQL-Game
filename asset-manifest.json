@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/SQL-Game/static/css/main.3e52fed3.css",
-    "main.js": "/SQL-Game/static/js/main.7ce32582.js",
+    "main.js": "/SQL-Game/static/js/main.aa83e079.js",
     "index.html": "/SQL-Game/index.html",
     "main.3e52fed3.css.map": "/SQL-Game/static/css/main.3e52fed3.css.map",
-    "main.7ce32582.js.map": "/SQL-Game/static/js/main.7ce32582.js.map"
+    "main.aa83e079.js.map": "/SQL-Game/static/js/main.aa83e079.js.map"
   },
   "entrypoints": [
     "static/css/main.3e52fed3.css",
-    "static/js/main.7ce32582.js"
+    "static/js/main.aa83e079.js"
   ]
 }
