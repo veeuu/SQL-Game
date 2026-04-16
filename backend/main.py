@@ -223,18 +223,10 @@ def get_hint_api(objective: str, solution_query: str, hint_number: int = 1):
 def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None)):
     user = get_user(authorization)
 
-    sandbox = setup_sandbox()
     try:
-        c = sandbox.cursor()
-        start = time.time()
-        c.execute(data.query)
-        results = c.fetchall()
-        exec_time = (time.time() - start) * 1000
+        results, columns, exec_time = run_challenge_query(data.query)
     except Exception as e:
-        sandbox.close()
         return {"success": False, "error": str(e)}
-    finally:
-        sandbox.close()
 
     from gemini_challenge_generator import validate_query
     is_correct, feedback = validate_query(
@@ -260,10 +252,10 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
                    (user['user_id'], today, points, points))
         conn.commit()
         dc.close(); conn.close()
-        return {"success": True, "correct": True, "results": results,
+        return {"success": True, "correct": True, "results": results, "columns": columns,
                 "execution_time": exec_time, "points_earned": points, "feedback": feedback}
 
-    return {"success": True, "correct": False, "results": results,
+    return {"success": True, "correct": False, "results": results, "columns": columns,
             "execution_time": exec_time, "feedback": feedback}
 
 # ─── Duo Submit ───────────────────────────────────────────────────────────────
@@ -286,20 +278,12 @@ async def duo_submit(data: QuerySubmit, authorization: Optional[str] = Header(No
 
     level, current_round, creator_id, opponent_id, p1_score, p2_score, total_rounds = room
 
-    # Execute in sandbox
-    sandbox = setup_sandbox()
+    # Execute against PostgreSQL challenge schema
     try:
-        sc = sandbox.cursor()
-        start = time.time()
-        sc.execute(data.query)
-        results = sc.fetchall()
-        exec_time = (time.time() - start) * 1000
+        results, columns, exec_time = run_challenge_query(data.query)
     except Exception as e:
-        sandbox.close()
         dc.close(); conn.close()
         return {"success": False, "error": str(e)}
-    finally:
-        sandbox.close()
 
     from gemini_challenge_generator import validate_query
     is_correct, feedback = validate_query(
