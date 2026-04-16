@@ -11,12 +11,14 @@ const Dashboard = ({ user, onLogout }) => {
   const location = useLocation();
   const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100, total_queries: 0, completed_levels: [], total_levels: 30 });
   const [activity, setActivity] = useState([]);
+  const [matches, setMatches] = useState([]);
   const [showModeSelection, setShowModeSelection] = useState(false);
 
   // Re-fetch every time dashboard is visited (including back navigation)
   useEffect(() => {
     fetchProgress();
     fetchActivity();
+    fetchMatches();
   }, [location.key]);
 
   const fetchProgress = async () => {
@@ -35,6 +37,13 @@ const Dashboard = ({ user, onLogout }) => {
     } catch (error) {
       console.error('Failed to fetch activity');
     }
+  };
+
+  const fetchMatches = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8000/api/matches/${user.username}`);
+      setMatches(res.data.matches || []);
+    } catch {}
   };
 
   const getMonthGrid = () => {
@@ -181,8 +190,30 @@ const Dashboard = ({ user, onLogout }) => {
           </div>
         </motion.div>
 
-        <div className="action-grid">
-          <motion.div 
+        {/* Match History */}
+        {matches.length > 0 && (
+          <motion.div className="match-history glass"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
+            <h3>⚔️ Recent Duo Matches</h3>
+            <div className="match-list">
+              {matches.map((m) => (
+                <div key={m.room_id} className={`match-row ${m.won ? 'win' : 'loss'}`}>
+                  <div className="match-result-badge">{m.won ? '🏆 WIN' : '😔 LOSS'}</div>
+                  <div className="match-vs">
+                    <span className="match-you">{user.username}</span>
+                    <span className="match-score">{m.my_score} — {m.opp_score}</span>
+                    <span className="match-opp">{m.opponent}</span>
+                  </div>
+                  <div className="match-meta">
+                    Best of {m.total_rounds} · {new Date(m.created_at).toLocaleDateString()}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        <div className="action-grid">          <motion.div 
             className="action-card glass primary-action"
             whileHover={{ scale: 1.05 }}
             onClick={() => setShowModeSelection(true)}

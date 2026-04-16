@@ -401,3 +401,78 @@
   height: 16px;
   border-radius: 4px;
 }
+
+/* Match History */
+.match-history {
+  margin: 0 0 24px 0;
+  padding: 24px;
+  border-radius: 20px;
+  background: white;
+}
+
+.match-history h3 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 16px 0;
+}
+
+.match-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.match-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border-left: 5px solid;
+}
+
+.match-row.win {
+  background: #f0fdf4;
+  border-color: #10b981;
+}
+
+.match-row.loss {
+  background: #fff7ed;
+  border-color: #f59e0b;
+}
+
+.match-result-badge {
+  font-size: 12px;
+  font-weight: 800;
+  min-width: 70px;
+}
+
+.match-row.win .match-result-badge { color: #065f46; }
+.match-row.loss .match-result-badge { color: #92400e; }
+
+.match-vs {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+
+.match-you { font-weight: 700; color: #1f2937; }
+.match-opp { font-weight: 700; color: #6b7280; }
+
+.match-score {
+  font-size: 18px;
+  font-weight: 900;
+  color: #8b5cf6;
+  padding: 2px 12px;
+  background: #f5f3ff;
+  border-radius: 8px;
+}
+
+.match-meta {
+  font-size: 12px;
+  color: #9ca3af;
+  white-space: nowrap;
+}

@@ -525,6 +525,53 @@ async def websocket_endpoint(ws: WebSocket, room_id: str, user_id: int):
         manager.disconnect(room_id, user_id)
         await manager.broadcast(room_id, {"type": "player_disconnected", "user_id": user_id})
 
+# ─── Match History ────────────────────────────────────────────────────────────
+
+@app.get("/api/matches/{username}")
+def get_match_history(username: str):
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute("SELECT id FROM users WHERE username=%s", (username,))
+    row = c.fetchone()
+    if not row:
+        c.close(); conn.close()
+        raise HTTPException(status_code=404, detail="User not found")
+    user_id = row[0]
+
+    c.execute("""
+        SELECT r.id, r.winner_id, r.player1_score, r.player2_score,
+               r.total_rounds, r.created_at,
+               u1.username AS creator_name, u2.username AS opponent_name,
+               r.creator_id
+        FROM rooms r
+        JOIN users u1 ON r.creator_id = u1.id
+        LEFT JOIN users u2 ON r.opponent_id = u2.id
+        WHERE (r.creator_id = %s OR r.opponent_id = %s)
+          AND r.status = 'completed'
+        ORDER BY r.created_at DESC
+        LIMIT 10
+    """, (user_id, user_id))
+    rows = c.fetchall()
+    c.close(); conn.close()
+
+    matches = []
+    for r in rows:
+        room_id, winner_id, p1, p2, total, created_at, creator, opponent, creator_id = r
+        is_creator = creator_id == user_id
+        my_score  = p1 if is_creator else p2
+        opp_score = p2 if is_creator else p1
+        opp_name  = opponent if is_creator else creator
+        matches.append({
+            "room_id": room_id,
+            "won": winner_id == user_id,
+            "my_score": my_score,
+            "opp_score": opp_score,
+            "opponent": opp_name or "Unknown",
+            "total_rounds": total,
+            "created_at": created_at,
+        })
+    return {"matches": matches}
+
 # ─── Mini Games ───────────────────────────────────────────────────────────────
 
 @app.post("/api/mini-game")
