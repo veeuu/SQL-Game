@@ -28,24 +28,23 @@ const GamePlay = ({ user }) => {
   const fetchChallenge = async () => {
     try {
       if (roomId) {
-        // Duo mode: Fetch Gemini-generated challenge
+        // Duo mode: Fetch Gemini-generated challenge for this round
         const response = await axios.get(`http://localhost:8000/api/room/${roomId}/challenge`);
         setChallenge({
           level: response.data.level,
-          title: `Round ${response.data.round} Challenge`,
+          title: response.data.title,
           story: response.data.story,
           objective: response.data.objective,
           hints: response.data.hints || [],
-          difficulty: response.data.difficulty || 'medium',
-          points: 50,
-          coins: 10
+          difficulty: response.data.difficulty,
+          points: response.data.points,
+          concept: response.data.concept,
+          solution_query: response.data.solution_query
         });
       } else {
-        // Solo mode: Fetch predefined challenges
-        const response = await axios.get('http://localhost:8000/api/challenges');
-        const challenges = response.data.challenges;
-        const currentChallenge = challenges.find(c => c.level === parseInt(level));
-        setChallenge(currentChallenge);
+        // Solo mode: Fetch Gemini-generated challenge for this level
+        const response = await axios.get(`http://localhost:8000/api/challenge/${level}`);
+        setChallenge(response.data);
       }
     } catch (error) {
       console.error('Failed to fetch challenge:', error);
@@ -63,7 +62,6 @@ const GamePlay = ({ user }) => {
     try {
       const token = localStorage.getItem('token');
       
-      // Choose endpoint based on mode
       const endpoint = roomId ? 'http://localhost:8000/api/duo/submit' : 'http://localhost:8000/api/submit-query';
       
       const response = await axios.post(
@@ -72,11 +70,11 @@ const GamePlay = ({ user }) => {
           query,
           level: parseInt(level),
           solution_type: solutionType,
-          room_id: roomId || undefined
+          room_id: roomId || undefined,
+          challenge_objective: challenge?.objective || '',
+          solution_query: challenge?.solution_query || ''
         },
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
+        { headers: { 'Authorization': `Bearer ${token}` } }
       );
 
       setResult(response.data);
