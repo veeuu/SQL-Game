@@ -79,7 +79,7 @@ const Dashboard = ({ user, onLogout }) => {
             </div>
             <div className="stat-info">
               <h3>Current Level</h3>
-              <p className="stat-value">{progress.level}/8</p>
+              <p className="stat-value">{progress.level}/30</p>
             </div>
           </motion.div>
 
@@ -111,7 +111,7 @@ const Dashboard = ({ user, onLogout }) => {
             </div>
             <div className="stat-info">
               <h3>Levels Completed</h3>
-              <p className="stat-value">{progress.completed_levels?.length || 0}/8</p>
+              <p className="stat-value">{progress.completed_levels?.length || 0}/30</p>
             </div>
           </motion.div>
 

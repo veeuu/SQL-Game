@@ -7,14 +7,39 @@ import toast from 'react-hot-toast';
 import './DungeonMap.css';
 
 const levels = [
-  { id: 1, title: 'SELECT Basics',      difficulty: '🟢 Rookie',    x: 50, y: 88, icon: '🏠' },
-  { id: 2, title: 'WHERE Clause',       difficulty: '🟢 Rookie',    x: 30, y: 75, icon: '🔍' },
-  { id: 3, title: 'JOIN Tables',        difficulty: '🟢 Rookie',    x: 50, y: 62, icon: '🔗' },
-  { id: 4, title: 'GROUP BY',           difficulty: '🟡 Pro',       x: 70, y: 50, icon: '📊' },
-  { id: 5, title: 'Subqueries',         difficulty: '🟡 Pro',       x: 50, y: 38, icon: '🌊' },
-  { id: 6, title: 'Window Functions',   difficulty: '🔴 Optimizer', x: 30, y: 25, icon: '🪟' },
-  { id: 7, title: 'Indexes',            difficulty: '🔴 Optimizer', x: 60, y: 15, icon: '⚡' },
-  { id: 8, title: 'Query Master',       difficulty: '🔴 Optimizer', x: 50, y: 5,  icon: '👑' },
+  // Beginner (1-10)
+  { id: 1,  title: 'SELECT Basics',       difficulty: '🟢 Beginner',    x: 50, y: 96, icon: '🏠' },
+  { id: 2,  title: 'WHERE Clause',        difficulty: '🟢 Beginner',    x: 30, y: 90, icon: '🔍' },
+  { id: 3,  title: 'ORDER BY',            difficulty: '🟢 Beginner',    x: 65, y: 84, icon: '📋' },
+  { id: 4,  title: 'LIMIT & OFFSET',      difficulty: '🟢 Beginner',    x: 40, y: 78, icon: '✂️' },
+  { id: 5,  title: 'DISTINCT',            difficulty: '🟢 Beginner',    x: 70, y: 72, icon: '🎯' },
+  { id: 6,  title: 'AND / OR / NOT',      difficulty: '🟢 Beginner',    x: 25, y: 66, icon: '🔗' },
+  { id: 7,  title: 'LIKE & Wildcards',    difficulty: '🟢 Beginner',    x: 55, y: 60, icon: '🃏' },
+  { id: 8,  title: 'IN & BETWEEN',        difficulty: '🟢 Beginner',    x: 75, y: 54, icon: '📦' },
+  { id: 9,  title: 'NULL Handling',       difficulty: '🟢 Beginner',    x: 35, y: 48, icon: '❓' },
+  { id: 10, title: 'Aggregate Functions', difficulty: '🟢 Beginner',    x: 60, y: 42, icon: '🔢' },
+  // Intermediate (11-20)
+  { id: 11, title: 'GROUP BY',            difficulty: '🟡 Intermediate', x: 20, y: 38, icon: '📊' },
+  { id: 12, title: 'HAVING',              difficulty: '🟡 Intermediate', x: 50, y: 34, icon: '🎛️' },
+  { id: 13, title: 'INNER JOIN',          difficulty: '🟡 Intermediate', x: 75, y: 30, icon: '🔗' },
+  { id: 14, title: 'LEFT & RIGHT JOIN',   difficulty: '🟡 Intermediate', x: 35, y: 26, icon: '↔️' },
+  { id: 15, title: 'FULL OUTER JOIN',     difficulty: '🟡 Intermediate', x: 65, y: 22, icon: '🌐' },
+  { id: 16, title: 'Subqueries',          difficulty: '🟡 Intermediate', x: 25, y: 18, icon: '🌊' },
+  { id: 17, title: 'EXISTS & NOT EXISTS', difficulty: '🟡 Intermediate', x: 55, y: 15, icon: '👁️' },
+  { id: 18, title: 'CASE WHEN',           difficulty: '🟡 Intermediate', x: 80, y: 12, icon: '🎭' },
+  { id: 19, title: 'String Functions',    difficulty: '🟡 Intermediate', x: 40, y: 9,  icon: '🔤' },
+  { id: 20, title: 'Date Functions',      difficulty: '🟡 Intermediate', x: 65, y: 6,  icon: '📅' },
+  // Advanced (21-30)
+  { id: 21, title: 'CTEs (WITH)',         difficulty: '🔴 Advanced',     x: 20, y: 4,  icon: '🏗️' },
+  { id: 22, title: 'Window Functions',    difficulty: '🔴 Advanced',     x: 50, y: 3,  icon: '🪟' },
+  { id: 23, title: 'ROW_NUMBER & RANK',   difficulty: '🔴 Advanced',     x: 75, y: 2,  icon: '🏆' },
+  { id: 24, title: 'PARTITION BY',        difficulty: '🔴 Advanced',     x: 30, y: 1.5,icon: '🗂️' },
+  { id: 25, title: 'Self JOIN',           difficulty: '🔴 Advanced',     x: 60, y: 1,  icon: '🔄' },
+  { id: 26, title: 'UNION & INTERSECT',   difficulty: '🔴 Advanced',     x: 15, y: 0.5,icon: '⚡' },
+  { id: 27, title: 'Indexes & EXPLAIN',   difficulty: '🔴 Advanced',     x: 45, y: 0.3,icon: '📈' },
+  { id: 28, title: 'Transactions',        difficulty: '🔴 Advanced',     x: 70, y: 0.2,icon: '💳' },
+  { id: 29, title: 'Recursive CTEs',      difficulty: '🔴 Advanced',     x: 30, y: 0.1,icon: '🌀' },
+  { id: 30, title: 'Query Master',        difficulty: '🔴 Advanced',     x: 55, y: 0,  icon: '👑' },
 ];
 
 const DungeonMap = ({ user }) => {
@@ -159,7 +184,7 @@ const DungeonMap = ({ user }) => {
         <div className="journey-stats">
           <div className="journey-stat">
             <span className="stat-label">Completed</span>
-            <span className="stat-number">{completedLevels.length}/8</span>
+            <span className="stat-number">{completedLevels.length}/30</span>
           </div>
           <div className="journey-stat">
             <span className="stat-label">Current</span>
@@ -167,7 +192,7 @@ const DungeonMap = ({ user }) => {
           </div>
           <div className="journey-stat">
             <span className="stat-label">Remaining</span>
-            <span className="stat-number">{8 - completedLevels.length}</span>
+            <span className="stat-number">{30 - completedLevels.length}</span>
           </div>
         </div>
       </div>

@@ -12,11 +12,13 @@ model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite-p
 LEVEL_CONFIG = {
     (1, 3):   {"difficulty": "easy",   "concept": "SELECT, FROM, WHERE basics"},
     (4, 6):   {"difficulty": "easy",   "concept": "ORDER BY, LIMIT, DISTINCT"},
-    (7, 10):  {"difficulty": "medium", "concept": "AND/OR, LIKE, IN, BETWEEN"},
-    (11, 15): {"difficulty": "medium", "concept": "JOIN, GROUP BY, HAVING, COUNT/SUM/AVG"},
-    (16, 20): {"difficulty": "hard",   "concept": "LEFT JOIN, Subqueries, CASE, MAX/MIN"},
-    (21, 25): {"difficulty": "hard",   "concept": "Window Functions, CTEs, Self JOIN"},
-    (26, 30): {"difficulty": "expert", "concept": "Recursive CTEs, Complex Aggregations"},
+    (7, 10):  {"difficulty": "easy",   "concept": "AND/OR/NOT, LIKE, IN, BETWEEN, NULL"},
+    (11, 13): {"difficulty": "medium", "concept": "GROUP BY, HAVING, Aggregate Functions"},
+    (14, 17): {"difficulty": "medium", "concept": "INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN"},
+    (18, 20): {"difficulty": "medium", "concept": "Subqueries, EXISTS, CASE WHEN"},
+    (21, 23): {"difficulty": "hard",   "concept": "CTEs (WITH clause), Window Functions, ROW_NUMBER/RANK"},
+    (24, 27): {"difficulty": "hard",   "concept": "PARTITION BY, Self JOIN, UNION/INTERSECT, Indexes"},
+    (28, 30): {"difficulty": "expert", "concept": "Transactions, Recursive CTEs, Complex multi-concept queries"},
 }
 
 def get_level_config(level: int):
