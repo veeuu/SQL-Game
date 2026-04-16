@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut, Play } from 'lucide-react';
 import CalendarHeatmap from 'react-calendar-heatmap';
@@ -11,15 +11,16 @@ import './Dashboard.css';
 
 const Dashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
-  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100 });
+  const location = useLocation();
+  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100, total_queries: 0, completed_levels: [] });
   const [activity, setActivity] = useState([]);
   const [showModeSelection, setShowModeSelection] = useState(false);
 
-
+  // Re-fetch every time dashboard is visited (including back navigation)
   useEffect(() => {
     fetchProgress();
     fetchActivity();
-  }, []);
+  }, [location.key]);
 
   const fetchProgress = async () => {
     try {
@@ -105,12 +106,28 @@ const Dashboard = ({ user, onLogout }) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <div className="stat-icon" style={{ background: '#3b82f6' }}>
+            <div className="stat-icon" style={{ background: '#f59e0b' }}>
+              <Play size={24} />
+            </div>
+            <div className="stat-info">
+              <h3>Levels Completed</h3>
+              <p className="stat-value">{progress.completed_levels?.length || 0}/8</p>
+            </div>
+          </motion.div>
+
+          <motion.div 
+            className="stat-card glass"
+            whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+          >
+            <div className="stat-icon" style={{ background: '#8b5cf6' }}>
               <Zap size={24} />
             </div>
             <div className="stat-info">
-              <h3>Energy</h3>
-              <p className="stat-value">{progress.energy}/100</p>
+              <h3>Queries Solved</h3>
+              <p className="stat-value">{progress.total_queries || 0}</p>
             </div>
           </motion.div>
         </div>
@@ -124,7 +141,7 @@ const Dashboard = ({ user, onLogout }) => {
           <div className="activity-header">
             <div>
               <h3>
-                {activity.reduce((sum, a) => sum + a.queries, 0)} queries solved in the last year
+                {progress.total_queries || 0} queries solved in the last year
               </h3>
               <p className="activity-subtitle">Keep building your SQL skills every day</p>
             </div>

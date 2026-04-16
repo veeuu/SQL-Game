@@ -149,10 +149,18 @@ def get_progress(username: str):
     if not row:
         c.close(); conn.close()
         raise HTTPException(status_code=404, detail="User not found")
-    c.execute("SELECT DISTINCT level FROM level_completions WHERE user_id=%s", (row[3],))
+    c.execute("SELECT DISTINCT level FROM level_completions WHERE user_id=%s ORDER BY level", (row[3],))
     completed = [r[0] for r in c.fetchall()]
+    c.execute("SELECT COALESCE(SUM(queries_solved),0) FROM daily_activity WHERE user_id=%s", (row[3],))
+    total_queries = c.fetchone()[0]
     c.close(); conn.close()
-    return {"level": row[0], "score": row[1], "energy": row[2], "completed_levels": completed}
+    return {
+        "level": row[0],
+        "score": row[1],
+        "energy": row[2],
+        "completed_levels": completed,
+        "total_queries": int(total_queries)
+    }
 
 @app.get("/api/activity/{username}")
 def get_activity(username: str):
