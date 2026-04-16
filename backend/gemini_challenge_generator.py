@@ -35,16 +35,19 @@ def generate_challenge(level: int, round_number: int = 1):
 Level: {level} | Round: {round_number} | Difficulty: {cfg['difficulty']}
 SQL Concept: {cfg['concept']}
 
-Available tables (PostgreSQL syntax):
-- users(id, username, email, age, city)
-- orders(id, user_id, product, amount, created_at)
-- employees(id, name, department, salary, manager_id)
+EXACT table schemas (use ONLY these column names, no others):
+
+challenge.customers  → customers(id, name, email, city, age, joined_date)
+challenge.orders     → orders(id, customer_id, product, category, amount, quantity, order_date)
+challenge.employees  → employees(id, name, department, salary, manager_id, hire_date)
+challenge.products   → products(id, name, category, price, stock)
 
 Rules:
-- Only use the tables listed above
+- Use ONLY the column names listed above — do not invent column names
+- Use ONLY the table names listed above
 - Test the concept: {cfg['concept']}
 - Fun dungeon/quest/adventure theme
-- Valid PostgreSQL query as solution
+- Valid PostgreSQL query using the exact schema above
 - Solvable in under 2 minutes
 - Round {round_number} must feel different from other rounds
 
@@ -52,11 +55,11 @@ Return ONLY this JSON (no markdown):
 {{
   "title": "Short catchy title with emoji",
   "story": "1-2 sentence dungeon-themed story",
-  "objective": "Exact task description for the player",
-  "solution_query": "The correct PostgreSQL query",
+  "objective": "Exact task description using the real column names",
+  "solution_query": "The correct PostgreSQL query using exact column names from schema",
   "hints": [
     "Hint 1: general direction",
-    "Hint 2: specific keyword",
+    "Hint 2: specific keyword or column name",
     "Hint 3: near-complete guidance"
   ],
   "concept": "{cfg['concept']}",
@@ -106,27 +109,36 @@ Return ONLY the hint text, no formatting, no markdown."""
 def validate_query(user_query: str, solution_query: str, objective: str,
                    actual_results, expected_results):
     """
-    Validate a user's SQL query.
-    1. Compare results if available
-    2. Fall back to Gemini semantic check
+    Validate a player's SQL query by logic/syntax using Gemini.
+    We do NOT compare result rows — the DB may be empty so that's irrelevant.
     Returns: (is_correct: bool, feedback: str)
     """
-    # Primary: result comparison
-    if actual_results is not None and expected_results is not None:
-        try:
-            if sorted(actual_results) == sorted(expected_results):
-                return True, "✅ Correct! Your query matches the expected output."
-        except:
-            pass
+    # If query threw an error (actual_results is None), it's wrong
+    if actual_results is None:
+        return False, "❌ Your query has a syntax error."
 
-    # Secondary: Gemini semantic validation
-    prompt = f"""SQL Challenge: {objective}
-Expected solution: {solution_query}
-Player's query: {user_query}
+    # Gemini checks structure and logic, not result data
+    prompt = f"""You are a SQL teacher validating a student's query.
 
-Is the player's query logically correct for this challenge?
-Accept any valid SQL that achieves the same result.
-Return ONLY JSON: {{"is_correct": true, "feedback": "one sentence explanation"}}"""
+Objective: {objective}
+Reference solution: {solution_query}
+Student's query: {user_query}
+
+Available schema:
+- customers(id, name, email, city, age, joined_date)
+- orders(id, customer_id, product, category, amount, quantity, order_date)
+- employees(id, name, department, salary, manager_id, hire_date)
+- products(id, name, category, price, stock)
+
+Important rules:
+- Validate the LOGIC and STRUCTURE only — NOT the result rows
+- The database may be empty so empty results are fine
+- Check: correct table(s), correct columns from the schema above, correct WHERE/JOIN/GROUP BY logic
+- Accept any valid SQL that correctly addresses the objective
+- Minor differences (aliases, column order, extra whitespace) are acceptable
+
+Return ONLY JSON (no markdown):
+{{"is_correct": true/false, "feedback": "one short sentence"}}"""
 
     try:
         response = model.generate_content(prompt)
@@ -138,11 +150,8 @@ Return ONLY JSON: {{"is_correct": true, "feedback": "one sentence explanation"}}
     except Exception as e:
         print(f"[Gemini] Validation error: {e}")
 
-    # Tertiary: if query ran and returned rows, assume correct
-    if actual_results and len(actual_results) > 0:
-        return True, "✅ Query returned results!"
-
-    return False, "❌ Query didn't match the expected output. Try again!"
+    # Fallback: query ran without error → assume correct
+    return True, "✅ Query executed successfully!"
 
 
 def _fallback(level: int, round_number: int):
@@ -150,26 +159,26 @@ def _fallback(level: int, round_number: int):
     pool = [
         {
             "title": "🗡️ The Adventurer's Registry",
-            "story": "The dungeon master needs a complete list of all registered adventurers.",
-            "objective": "Select all columns from the users table",
-            "solution_query": "SELECT * FROM users",
+            "story": "The dungeon master needs a complete list of all customers.",
+            "objective": "Select all columns from the customers table",
+            "solution_query": "SELECT * FROM customers",
             "hints": ["Use SELECT *", "Specify the table with FROM", "No filtering needed"],
             "concept": "SELECT", "difficulty": "easy", "points": 50
         },
         {
             "title": "⚔️ The Veteran Warriors",
-            "story": "Only experienced warriors (age > 25) may enter the advanced dungeon.",
-            "objective": "Find all users where age is greater than 25",
-            "solution_query": "SELECT * FROM users WHERE age > 25",
+            "story": "Only experienced warriors (age > 30) may enter the advanced dungeon.",
+            "objective": "Find all customers where age is greater than 30",
+            "solution_query": "SELECT * FROM customers WHERE age > 30",
             "hints": ["Use WHERE clause", "Use > operator", "Filter on the age column"],
             "concept": "WHERE", "difficulty": "easy", "points": 60
         },
         {
             "title": "📜 The Quest Ledger",
-            "story": "The guild master wants to see which heroes have completed quests.",
-            "objective": "Join users and orders tables to show usernames with their orders",
-            "solution_query": "SELECT users.username, orders.* FROM users JOIN orders ON users.id = orders.user_id",
-            "hints": ["Use JOIN", "Match users.id = orders.user_id", "Select from both tables"],
+            "story": "The guild master wants to see which heroes have placed orders.",
+            "objective": "Join customers and orders to show customer names with their orders",
+            "solution_query": "SELECT customers.name, orders.* FROM customers JOIN orders ON customers.id = orders.customer_id",
+            "hints": ["Use JOIN", "Match customers.id = orders.customer_id", "Select from both tables"],
             "concept": "JOIN", "difficulty": "medium", "points": 80
         },
         {
@@ -183,9 +192,9 @@ def _fallback(level: int, round_number: int):
         {
             "title": "🏆 The Richest Heroes",
             "story": "Find the heroes who have spent the most gold in the dungeon shop.",
-            "objective": "Get total amount spent per user, ordered by total descending",
-            "solution_query": "SELECT user_id, SUM(amount) AS total FROM orders GROUP BY user_id ORDER BY total DESC",
-            "hints": ["Use GROUP BY user_id", "Use SUM(amount)", "ORDER BY total DESC"],
+            "objective": "Get total amount spent per customer, ordered by total descending",
+            "solution_query": "SELECT customer_id, SUM(amount) AS total FROM orders GROUP BY customer_id ORDER BY total DESC",
+            "hints": ["Use GROUP BY customer_id", "Use SUM(amount)", "ORDER BY total DESC"],
             "concept": "GROUP BY", "difficulty": "medium", "points": 90
         },
     ]

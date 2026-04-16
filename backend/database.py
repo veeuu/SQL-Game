@@ -17,10 +17,11 @@ def get_conn():
     return psycopg2.connect(**DB_CONFIG)
 
 def init_db():
-    """Create all app tables. No sample data — real data only."""
+    """Create all app tables + challenge dataset tables."""
     conn = get_conn()
     c = conn.cursor()
 
+    # ── App tables ──────────────────────────────────────────────────────────
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -103,31 +104,79 @@ def init_db():
         )
     """)
 
+    # ── Challenge dataset tables (players run queries against these) ─────────
+    c.execute("CREATE SCHEMA IF NOT EXISTS challenge")
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.customers (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            email TEXT,
+            city TEXT,
+            age INTEGER,
+            joined_date TEXT
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.orders (
+            id SERIAL PRIMARY KEY,
+            customer_id INTEGER,
+            product TEXT,
+            category TEXT,
+            amount NUMERIC,
+            quantity INTEGER,
+            order_date TEXT
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.employees (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            department TEXT,
+            salary NUMERIC,
+            manager_id INTEGER,
+            hire_date TEXT
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.products (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            category TEXT,
+            price NUMERIC,
+            stock INTEGER
+        )
+    """)
+
     conn.commit()
     c.close()
     conn.close()
-    print("✅ PostgreSQL tables ready")
+    print("✅ PostgreSQL tables + challenge schema ready")
 
 
 def run_challenge_query(sql: str):
     """
-    Execute a player's SQL query against the public schema (real data).
-    Always rolled back — player queries never persist.
+    Execute a player's SQL query against the challenge schema.
+    Players write  SELECT * FROM orders  and it hits challenge.orders.
+    Always rolled back — never persists.
     Returns (results, columns, exec_time_ms).
     """
     conn = get_conn()
     c = conn.cursor()
     try:
+        c.execute("SET search_path TO challenge, public")
         start = time.time()
         c.execute(sql)
         results = c.fetchall()
         columns = [desc[0] for desc in c.description] if c.description else []
         exec_time = (time.time() - start) * 1000
-        conn.rollback()  # never persist
         return results, columns, exec_time
     except Exception:
-        conn.rollback()
         raise
     finally:
+        conn.rollback()  # never persist player queries
         c.close()
         conn.close()

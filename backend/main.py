@@ -226,7 +226,13 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
     try:
         results, columns, exec_time = run_challenge_query(data.query)
     except Exception as e:
-        return {"success": False, "error": str(e)}
+        err = str(e)
+        # Give a helpful message for common errors
+        if "does not exist" in err and "column" in err:
+            return {"success": False, "error": f"Column not found. Available columns: customers(id,name,email,city,age,joined_date), orders(id,customer_id,product,category,amount,quantity,order_date), employees(id,name,department,salary,manager_id,hire_date), products(id,name,category,price,stock)"}
+        if "does not exist" in err and "relation" in err:
+            return {"success": False, "error": f"Table not found. Available tables: customers, orders, employees, products"}
+        return {"success": False, "error": err}
 
     from gemini_challenge_generator import validate_query
     is_correct, feedback = validate_query(
@@ -238,11 +244,20 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
         points = data.level * 10 + 40
         conn = get_conn()
         dc = conn.cursor()
+
+        # Save completion
         dc.execute("""INSERT INTO level_completions (user_id, level, query, execution_time, completed_at)
                       VALUES (%s,%s,%s,%s,%s)""",
                    (user['user_id'], data.level, data.query, exec_time, datetime.now().isoformat()))
-        dc.execute("UPDATE progress SET score=score+%s, energy=LEAST(energy+5,100) WHERE user_id=%s",
-                   (points, user['user_id']))
+
+        # Advance level if this is the current level
+        dc.execute("SELECT level FROM progress WHERE user_id=%s", (user['user_id'],))
+        current = dc.fetchone()[0]
+        next_level = max(current, data.level + 1)
+
+        dc.execute("UPDATE progress SET score=score+%s, energy=LEAST(energy+5,100), level=%s WHERE user_id=%s",
+                   (points, next_level, user['user_id']))
+
         today = datetime.now().date().isoformat()
         dc.execute("""INSERT INTO daily_activity (user_id, date, queries_solved, points_earned)
                       VALUES (%s,%s,1,%s)
@@ -253,7 +268,8 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
         conn.commit()
         dc.close(); conn.close()
         return {"success": True, "correct": True, "results": results, "columns": columns,
-                "execution_time": exec_time, "points_earned": points, "feedback": feedback}
+                "execution_time": exec_time, "points_earned": points, "feedback": feedback,
+                "next_level": next_level}
 
     return {"success": True, "correct": False, "results": results, "columns": columns,
             "execution_time": exec_time, "feedback": feedback}
@@ -278,12 +294,16 @@ async def duo_submit(data: QuerySubmit, authorization: Optional[str] = Header(No
 
     level, current_round, creator_id, opponent_id, p1_score, p2_score, total_rounds = room
 
-    # Execute against PostgreSQL challenge schema
     try:
         results, columns, exec_time = run_challenge_query(data.query)
     except Exception as e:
         dc.close(); conn.close()
-        return {"success": False, "error": str(e)}
+        err = str(e)
+        if "does not exist" in err and "column" in err:
+            return {"success": False, "error": f"Column not found. Available columns: customers(id,name,email,city,age,joined_date), orders(id,customer_id,product,category,amount,quantity,order_date), employees(id,name,department,salary,manager_id,hire_date), products(id,name,category,price,stock)"}
+        if "does not exist" in err and "relation" in err:
+            return {"success": False, "error": f"Table not found. Available tables: customers, orders, employees, products"}
+        return {"success": False, "error": err}
 
     from gemini_challenge_generator import validate_query
     is_correct, feedback = validate_query(

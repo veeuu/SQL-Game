@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Play, Lightbulb, CheckCircle, XCircle, Zap, Trophy } from 'lucide-react';
+import { ArrowLeft, Play, Lightbulb, CheckCircle, XCircle, Zap, Trophy, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import './GamePlay.css';
@@ -177,6 +177,29 @@ const GamePlay = ({ user }) => {
                   <p className="points-earned">+{result.points_earned} points 🏆</p>
                 )}
                 {result.feedback && <p className="feedback">{result.feedback}</p>}
+
+                {/* Next Level button */}
+                {result.correct && result.next_level && !roomId && (
+                  <div className="next-level-wrap">
+                    {result.next_level <= 8 ? (
+                      <button
+                        className="btn btn-next-level"
+                        onClick={() => {
+                          setResult(null);
+                          setQuery('');
+                          setHintIndex(0);
+                          navigate(`/play/${result.next_level}`);
+                        }}
+                      >
+                        Next Level <ArrowRight size={18} />
+                      </button>
+                    ) : (
+                      <button className="btn btn-next-level" onClick={() => navigate('/map')}>
+                        🏆 All Levels Complete! Return to Map
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {result.results?.length > 0 && (
                   <div className="result-table-wrap">
