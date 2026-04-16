@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { API, WS } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, ArrowLeft } from 'lucide-react';
@@ -70,7 +71,7 @@ const DungeonMap = ({ user }) => {
 
   const fetchProgress = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/progress/${user.username}`);
+      const res = await axios.get(`${API}/api/progress/${user.username}`);
       setCurrentLevel(res.data.level);
       setCompletedLevels(res.data.completed_levels || []);
       if (res.data.total_levels) setTotalLevels(res.data.total_levels);

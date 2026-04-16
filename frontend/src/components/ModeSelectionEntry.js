@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { API, WS } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Bot, ArrowRight, X, Copy, Check } from 'lucide-react';
@@ -34,7 +35,7 @@ const ModeSelectionEntry = ({ onClose }) => {
       }
       
       const response = await axios.post(
-        'http://localhost:8000/api/room/create',
+        '${API}/api/room/create',
         { mode: 'duo', level: 1 },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -68,12 +69,12 @@ const ModeSelectionEntry = ({ onClose }) => {
       }
       
       await axios.post(
-        'http://localhost:8000/api/room/join',
+        '${API}/api/room/join',
         { room_id: joinRoomId },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
       
-      const roomResponse = await axios.get(`http://localhost:8000/api/room/${joinRoomId}`);
+      const roomResponse = await axios.get(`${API}/api/room/${joinRoomId}`);
       const roomLevel = roomResponse.data.level;
       
       sessionStorage.setItem('gameMode', 'duo');

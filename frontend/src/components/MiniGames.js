@@ -4,9 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Trophy, Zap, Timer, RotateCcw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { API } from '../config';
 import './MiniGames.css';
-
-const API = 'http://localhost:8000';
 
 // ─── Game 1: SQL Flashcards (Memory Match) ───────────────────────────────────
 const MATCH_PAIRS = [

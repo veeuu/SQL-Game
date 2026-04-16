@@ -4,9 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Play, Lightbulb, CheckCircle, XCircle, Zap, Trophy, ArrowRight, Users, Wifi, WifiOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { API, WS } from '../config';
 import './GamePlay.css';
-
-const API = 'http://localhost:8000';
 
 // ─── Solo Mode ────────────────────────────────────────────────────────────────
 const SoloPlay = ({ user, level, navigate }) => {
@@ -186,7 +185,7 @@ const DuoPlay = ({ user, level, roomId, navigate }) => {
 
   const connectWS = () => {
     if (!myUserId) return;
-    ws.current = new WebSocket(`ws://localhost:8000/ws/${roomId}/${myUserId}`);
+    ws.current = new WebSocket(`${WS}/ws/${roomId}/${myUserId}`);
     ws.current.onopen = () => { setWsConnected(true); toast.success('Connected to room'); };
     ws.current.onclose = () => setWsConnected(false);
     ws.current.onerror = () => setWsConnected(false);

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API, WS } from '../config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Target } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -31,7 +32,7 @@ const Login = ({ onLogin }) => {
 
   const doLogin = async () => {
     try {
-      const res = await axios.post('http://localhost:8000/api/login', formData);
+      const res = await axios.post('${API}/api/login', formData);
       toast.success('Welcome back, Adventurer!');
       onLogin(res.data.token, res.data.username, res.data.total_levels);
     } catch (err) {
@@ -41,7 +42,7 @@ const Login = ({ onLogin }) => {
 
   const doRegister = async (days) => {
     try {
-      const res = await axios.post('http://localhost:8000/api/register', {
+      const res = await axios.post('${API}/api/register', {
         ...formData,
         total_levels: days,
       });

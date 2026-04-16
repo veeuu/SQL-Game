@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API, WS } from '../config';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut, Play } from 'lucide-react';
@@ -23,7 +24,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchProgress = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/progress/${user.username}`);
+      const response = await axios.get(`${API}/api/progress/${user.username}`);
       setProgress(response.data);
     } catch (error) {
       console.error('Failed to fetch progress');
@@ -32,7 +33,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchActivity = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/api/activity/${user.username}`);
+      const response = await axios.get(`${API}/api/activity/${user.username}`);
       setActivity(response.data);
     } catch (error) {
       console.error('Failed to fetch activity');
@@ -41,7 +42,7 @@ const Dashboard = ({ user, onLogout }) => {
 
   const fetchMatches = async () => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/matches/${user.username}`);
+      const res = await axios.get(`${API}/api/matches/${user.username}`);
       setMatches(res.data.matches || []);
     } catch {}
   };
