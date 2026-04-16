@@ -136,11 +136,12 @@ const DungeonMap = ({ user }) => {
       </div>
 
       {/* Scrollable map */}
-      <div className="dmap-scroll">
+      <div className="dmap-scroll" ref={scrollRef}>
         <svg
           width={svgW}
           height={svgH}
           className="dmap-svg"
+          style={{ width: '100%', minHeight: svgH }}
         >
           {/* Zone background bands */}
           {ZONE_COLORS.map((zone) => {
