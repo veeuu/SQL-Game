@@ -57,6 +57,7 @@ class UserRegister(BaseModel):
     username: str
     email: str
     password: str
+    total_levels: int = 30  # user's chosen challenge length
 
 class UserLogin(BaseModel):
     username: str
@@ -114,9 +115,9 @@ def register(user: UserRegister):
             (user.username, user.email, hashed, datetime.now().isoformat())
         )
         uid = c.fetchone()[0]
-        c.execute("INSERT INTO progress (user_id) VALUES (%s)", (uid,))
+        c.execute("INSERT INTO progress (user_id, total_levels) VALUES (%s, %s)", (uid, user.total_levels))
         conn.commit()
-        return {"token": create_token(uid, user.username), "username": user.username}
+        return {"token": create_token(uid, user.username), "username": user.username, "total_levels": user.total_levels}
     except Exception as e:
         conn.rollback()
         if "unique" in str(e).lower():
@@ -131,10 +132,15 @@ def login(user: UserLogin):
     c = conn.cursor()
     c.execute("SELECT id, username, password FROM users WHERE username=%s", (user.username,))
     row = c.fetchone()
-    c.close(); conn.close()
     if not row or not bcrypt.verify(user.password, row[2]):
+        c.close(); conn.close()
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    return {"token": create_token(row[0], row[1]), "username": row[1]}
+    # Get total_levels
+    c.execute("SELECT total_levels FROM progress WHERE user_id=%s", (row[0],))
+    prog = c.fetchone()
+    total_levels = prog[0] if prog else 30
+    c.close(); conn.close()
+    return {"token": create_token(row[0], row[1]), "username": row[1], "total_levels": total_levels}
 
 # ─── Progress Routes ──────────────────────────────────────────────────────────
 
@@ -142,7 +148,7 @@ def login(user: UserLogin):
 def get_progress(username: str):
     conn = get_conn()
     c = conn.cursor()
-    c.execute("""SELECT p.level, p.score, p.energy, u.id
+    c.execute("""SELECT p.level, p.score, p.energy, u.id, p.total_levels
                  FROM progress p JOIN users u ON p.user_id=u.id
                  WHERE u.username=%s""", (username,))
     row = c.fetchone()
@@ -158,6 +164,7 @@ def get_progress(username: str):
         "level": row[0],
         "score": row[1],
         "energy": row[2],
+        "total_levels": row[4],
         "completed_levels": completed,
         "total_queries": int(total_queries)
     }
@@ -259,8 +266,9 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
                    (user['user_id'], data.level, data.query, exec_time, datetime.now().isoformat()))
 
         # Advance level if this is the current level
-        dc.execute("SELECT level FROM progress WHERE user_id=%s", (user['user_id'],))
-        current = dc.fetchone()[0]
+        dc.execute("SELECT level, total_levels FROM progress WHERE user_id=%s", (user['user_id'],))
+        prog = dc.fetchone()
+        current, total_levels = prog[0], prog[1]
         next_level = max(current, data.level + 1)
 
         dc.execute("UPDATE progress SET score=score+%s, energy=LEAST(energy+5,100), level=%s WHERE user_id=%s",
@@ -277,7 +285,7 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
         dc.close(); conn.close()
         return {"success": True, "correct": True, "results": results, "columns": columns,
                 "execution_time": exec_time, "points_earned": points, "feedback": feedback,
-                "next_level": next_level}
+                "next_level": next_level, "total_levels": total_levels}
 
     return {"success": True, "correct": False, "results": results, "columns": columns,
             "execution_time": exec_time, "feedback": feedback}

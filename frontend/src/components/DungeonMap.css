@@ -1,550 +1,115 @@
-.dungeon-map-container {
+.dmap-container {
   min-height: 100vh;
-  padding: 32px;
-  background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 100%);
-  position: relative;
-  overflow-x: hidden;
+  background: linear-gradient(160deg, #f0fdf4 0%, #fef9c3 50%, #f5f3ff 100%);
+  display: flex;
+  flex-direction: column;
 }
 
-.map-header {
+/* Header */
+.dmap-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
+  justify-content: space-between;
+  padding: 16px 28px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid rgba(0,0,0,0.06);
+  position: sticky;
+  top: 0;
+  z-index: 10;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 12px;
 }
 
-.map-header h1 {
-  font-size: 32px;
-  font-weight: 800;
-  color: #1e293b;
+.dmap-header h1 {
+  font-size: 24px;
+  font-weight: 900;
+  color: #1f2937;
+  margin: 0;
 }
 
-.map-legend {
+.dmap-legend {
   display: flex;
-  gap: 20px;
+  gap: 18px;
   font-size: 13px;
+  font-weight: 600;
 }
 
-.map-legend span {
+/* Scrollable map area */
+.dmap-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.dmap-svg {
+  display: block;
+  min-width: 100%;
+}
+
+/* Footer */
+.dmap-footer {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 16px 28px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px);
+  border-top: 2px solid rgba(0,0,0,0.06);
+  position: sticky;
+  bottom: 0;
+}
+
+.dmap-stat {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #64748b;
+  font-size: 14px;
   font-weight: 600;
+  color: #374151;
 }
 
-.map-canvas {
-  position: relative;
-  width: 100%;
-  min-height: 800px;
-  background: linear-gradient(to bottom, 
-    #86efac 0%, 
-    #6ee7b7 35%,
-    #fde68a 45%,
-    #fcd34d 100%
-  );
-  border-radius: 24px;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 32px;
-  overflow: hidden;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-}
-
-/* Decorative elements - cleaner transition */
-.map-canvas::before {
-  content: '';
-  position: absolute;
-  top: 38%;
-  left: 0;
-  right: 0;
-  height: 10%;
-  background: linear-gradient(to bottom, 
-    rgba(110, 231, 183, 0.8) 0%,
-    rgba(253, 230, 138, 0.8) 100%
-  );
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Decorative elements */
-.map-decoration {
-  position: absolute;
-  z-index: 2;
-  opacity: 0.7;
-  font-size: 32px;
-  pointer-events: none;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-/* Green zone decorations (top 40%) */
-.tree-1 { top: 8%; left: 10%; animation-delay: 0s; }
-.tree-2 { top: 18%; left: 75%; animation-delay: 0.5s; }
-.tree-3 { top: 28%; left: 15%; animation-delay: 1s; }
-.flower-1 { top: 12%; left: 85%; font-size: 24px; animation-delay: 0.3s; }
-.flower-2 { top: 22%; left: 5%; font-size: 24px; animation-delay: 0.7s; }
-
-/* Desert zone decorations (bottom 60%) */
-.cactus-1 { top: 55%; left: 12%; animation-delay: 0.2s; }
-.cactus-2 { top: 70%; left: 80%; animation-delay: 0.6s; }
-.cactus-3 { top: 85%; left: 20%; animation-delay: 0.9s; }
-.planet-1 { top: 60%; left: 88%; font-size: 28px; animation-delay: 0.4s; }
-.planet-2 { top: 78%; left: 8%; font-size: 24px; animation-delay: 0.8s; }
-
-/* Clouds */
-.cloud {
-  position: absolute;
-  font-size: 40px;
-  opacity: 0.4;
-  z-index: 1;
-  animation: drift 20s linear infinite;
-}
-
-@keyframes drift {
-  0% { transform: translateX(-100px); }
-  100% { transform: translateX(100vw); }
-}
-
-.cloud-1 { top: 10%; animation-duration: 25s; }
-.cloud-2 { top: 20%; animation-duration: 30s; animation-delay: 5s; }
-.cloud-3 { top: 45%; animation-duration: 28s; animation-delay: 10s; }
-
-.map-paths {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 5;
-}
-
-.map-paths line {
-  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
-}
-
-/* Winding path effect */
-.map-paths path {
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.map-node {
-  position: absolute;
-  width: 90px;
-  height: 90px;
-  transform: translate(-50%, -50%);
-  cursor: pointer;
-  z-index: 10;
-  transition: all 0.3s ease;
-}
-
-.node-inner {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  display: flex;
+/* Buttons */
+.btn {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  border: 5px solid white;
-  transition: all 0.3s ease;
-  position: relative;
-  background: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-}
-
-.node-inner::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  background: inherit;
-  opacity: 0.3;
-  z-index: -1;
-}
-
-/* Completed levels - Green with star */
-.map-node.completed .node-inner {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-color: white;
-  color: white;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-}
-
-.map-node.completed::after {
-  content: '⭐';
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  font-size: 28px;
-  animation: starRotate 3s linear infinite;
-}
-
-@keyframes starRotate {
-  0%, 100% { transform: rotate(-15deg); }
-  50% { transform: rotate(15deg); }
-}
-
-/* Current level - Purple with glow */
-.map-node.current .node-inner,
-.map-node.available .node-inner {
-  background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-  border-color: white;
-  color: white;
-  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.5);
-  animation: pulse 2s infinite;
-}
-
-.map-node.current::after {
-  content: '✨';
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  font-size: 24px;
-  animation: sparkle 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    box-shadow: 0 8px 20px rgba(168, 85, 247, 0.5);
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    box-shadow: 0 12px 30px rgba(168, 85, 247, 0.7);
-    transform: translate(-50%, -50%) scale(1.05);
-  }
-}
-
-@keyframes sparkle {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
-}
-
-/* Locked levels - Gray */
-.map-node.locked .node-inner {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
-  border-color: white;
-  color: #94a3b8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.map-node:hover:not(.locked) {
-  transform: translate(-50%, -50%) scale(1.15);
-}
-
-.map-node:hover:not(.locked) .node-inner {
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-}
-
-.node-label {
-  position: absolute;
-  bottom: -40px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 14px;
-  font-weight: 800;
-  color: white;
-  background: rgba(0, 0, 0, 0.6);
-  padding: 6px 16px;
-  border-radius: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(4px);
-  white-space: nowrap;
-}
-
-.level-tooltip {
-  position: absolute;
-  transform: translate(-50%, calc(-100% - 20px));
-  padding: 20px 24px;
-  min-width: 220px;
-  text-align: center;
-  z-index: 100;
-  pointer-events: none;
-  background: white;
-  border: 3px solid #3b82f6;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-  border-radius: 16px;
-}
-
-.level-tooltip::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 12px solid transparent;
-  border-right: 12px solid transparent;
-  border-top: 12px solid #3b82f6;
-}
-
-.level-tooltip h4 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  color: #1e293b;
-  font-weight: 800;
-}
-
-.level-tooltip p {
-  font-size: 14px;
-  color: #64748b;
-  font-weight: 600;
-}
-
-.map-info {
-  padding: 32px;
-  max-width: 800px;
-  margin: 0 auto;
-  background: white;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-radius: 16px;
-}
-
-.map-info h3 {
-  font-size: 24px;
-  margin-bottom: 24px;
-  text-align: center;
-  color: #1e293b;
-  font-weight: 800;
-}
-
-.journey-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.journey-stat {
-  text-align: center;
-  padding: 24px;
-  background: #f8fafc;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  transition: all 0.2s ease;
-}
-
-.journey-stat:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-color: #cbd5e1;
-}
-
-.stat-label {
-  display: block;
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 8px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.stat-number {
-  display: block;
-  font-size: 32px;
-  font-weight: 800;
-  color: #3b82f6;
-}
-
-/* Mode Selection */
-.mode-selection-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.mode-selection-card {
-  width: 90%;
-  max-width: 600px;
-  padding: 40px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.mode-selection-card h2 {
-  font-size: 28px;
-  text-align: center;
-  margin-bottom: 8px;
-  color: #1e293b;
-  font-weight: 800;
-}
-
-.mode-subtitle {
-  text-align: center;
-  color: #64748b;
-  margin-bottom: 32px;
-  font-size: 15px;
-}
-
-.mode-options {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-.mode-option {
-  background: #f8fafc;
-  border: 2px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 32px 24px;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.mode-option:hover {
-  border-color: #3b82f6;
-  background: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
-}
-
-.mode-icon {
-  color: #3b82f6;
-  margin-bottom: 16px;
-}
-
-.mode-option h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  color: #1e293b;
-  font-weight: 700;
-}
-
-.mode-option p {
-  color: #64748b;
-  font-size: 14px;
-  margin-bottom: 16px;
-}
-
-.mode-badge {
-  display: inline-block;
-  background: #3b82f6;
-  color: white;
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.close-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: #f1f5f9;
+  gap: 6px;
+  padding: 10px 18px;
   border: none;
-  font-size: 24px;
-  color: #64748b;
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.close-btn:hover {
-  background: #e2e8f0;
-  color: #1e293b;
-}
-
-.duo-options {
-  text-align: center;
-}
-
-.divider {
-  margin: 24px 0;
-  color: #94a3b8;
+  border-radius: 10px;
+  font-size: 14px;
   font-weight: 600;
-  font-size: 13px;
-}
-
-.join-room {
-  display: flex;
-  gap: 12px;
-}
-
-.room-created {
-  text-align: center;
-  padding: 24px;
-  background: #f0fdf4;
-  border-radius: 12px;
-  border: 1px solid #86efac;
-}
-
-.room-created h3 {
-  color: #16a34a;
-  margin-bottom: 16px;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.room-id-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin: 16px 0;
-}
-
-.room-id-display code {
-  background: white;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 20px;
-  font-weight: 700;
-  color: #3b82f6;
-  border: 1px solid #e2e8f0;
-}
-
-.copy-btn {
-  background: #3b82f6;
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.copy-btn:hover {
-  background: #2563eb;
+.btn-secondary {
+  background: rgba(0,0,0,0.06);
+  color: #374151;
 }
 
-@media (max-width: 768px) {
-  .dungeon-map-container {
-    padding: 16px;
-  }
-  
-  .map-canvas {
-    height: 400px;
-  }
-  
-  .journey-stats {
-    grid-template-columns: 1fr;
-  }
-  
-  .mode-options {
-    grid-template-columns: 1fr;
-  }
+.btn-secondary:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+/* Scrollbar styling */
+.dmap-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dmap-scroll::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.04);
+  border-radius: 4px;
+}
+
+.dmap-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+}
+
+.dmap-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.25);
 }

@@ -16,16 +16,18 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
+    const total_levels = parseInt(localStorage.getItem('total_levels') || '30');
     if (token && username) {
-      setUser({ token, username });
+      setUser({ token, username, total_levels });
     }
     setLoading(false);
   }, []);
 
-  const handleLogin = (token, username) => {
+  const handleLogin = (token, username, totalLevels = 30) => {
     localStorage.setItem('token', token);
     localStorage.setItem('username', username);
-    setUser({ token, username });
+    localStorage.setItem('total_levels', totalLevels);
+    setUser({ token, username, total_levels: totalLevels });
   };
 
   const handleLogout = () => {

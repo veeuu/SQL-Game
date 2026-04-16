@@ -336,3 +336,127 @@
     display: none;
   }
 }
+
+/* Challenge Picker */
+.challenge-picker {
+  padding: 10px 0;
+}
+
+.challenge-picker-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.challenge-picker-header svg {
+  color: #8b5cf6;
+  margin-bottom: 8px;
+}
+
+.challenge-picker-header h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+}
+
+.challenge-picker-header p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+.challenge-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.challenge-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 18px 12px;
+  border: 3px solid transparent;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.challenge-option:hover {
+  border-color: var(--accent);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+}
+
+.opt-emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.opt-label {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.opt-desc {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.opt-levels {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  padding: 3px 10px;
+  background: color-mix(in srgb, var(--accent) 12%, white);
+  border-radius: 20px;
+  margin-top: 4px;
+}
+
+.custom-days {
+  margin-bottom: 16px;
+}
+
+.custom-days p {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.custom-input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.custom-input-row .input-field {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.custom-input-row .btn {
+  padding: 12px 20px;
+  white-space: nowrap;
+}
+
+.back-btn {
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.back-btn:hover {
+  color: #374151;
+}

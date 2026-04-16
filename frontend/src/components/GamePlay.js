@@ -181,7 +181,7 @@ const GamePlay = ({ user }) => {
                 {/* Next Level button */}
                 {result.correct && result.next_level && !roomId && (
                   <div className="next-level-wrap">
-                    {result.next_level <= 30 ? (
+                    {result.next_level <= (result.total_levels || 30) ? (
                       <button
                         className="btn btn-next-level"
                         onClick={() => {
@@ -195,7 +195,7 @@ const GamePlay = ({ user }) => {
                       </button>
                     ) : (
                       <button className="btn btn-next-level" onClick={() => navigate('/map')}>
-                        🏆 All 30 Levels Complete! Return to Map
+                        🏆 Challenge Complete! Return to Map
                       </button>
                     )}
                   </div>

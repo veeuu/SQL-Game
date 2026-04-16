@@ -38,7 +38,8 @@ def init_db():
             user_id INTEGER UNIQUE REFERENCES users(id),
             level INTEGER DEFAULT 1,
             score INTEGER DEFAULT 0,
-            energy INTEGER DEFAULT 100
+            energy INTEGER DEFAULT 100,
+            total_levels INTEGER DEFAULT 30
         )
     """)
 

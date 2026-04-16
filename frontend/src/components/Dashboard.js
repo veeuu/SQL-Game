@@ -1,18 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut, Play } from 'lucide-react';
-import CalendarHeatmap from 'react-calendar-heatmap';
 import axios from 'axios';
 import ModeSelectionEntry from './ModeSelectionEntry';
-
-import 'react-calendar-heatmap/dist/styles.css';
 import './Dashboard.css';
 
 const Dashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100, total_queries: 0, completed_levels: [] });
+  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100, total_queries: 0, completed_levels: [], total_levels: 30 });
   const [activity, setActivity] = useState([]);
   const [showModeSelection, setShowModeSelection] = useState(false);
 
@@ -40,15 +37,31 @@ const Dashboard = ({ user, onLogout }) => {
     }
   };
 
-  const getHeatmapData = () => {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setFullYear(startDate.getFullYear() - 1);
-    
-    return activity.map(a => ({
-      date: a.date,
-      count: a.queries
-    }));
+  const getMonthGrid = () => {
+    const days_to_show = progress.total_levels || 30;
+    const map = {};
+    activity.forEach(a => { map[a.date] = a.queries; });
+
+    const days = [];
+    for (let i = days_to_show - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      days.push({
+        date: key,
+        label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        count: map[key] || 0,
+      });
+    }
+    return days;
+  };
+
+  const getColor = (count) => {
+    if (count === 0) return '#e5e7eb';
+    if (count < 3)  return '#86efac';
+    if (count < 6)  return '#4ade80';
+    if (count < 10) return '#16a34a';
+    return '#14532d';
   };
 
   return (
@@ -79,7 +92,7 @@ const Dashboard = ({ user, onLogout }) => {
             </div>
             <div className="stat-info">
               <h3>Current Level</h3>
-              <p className="stat-value">{progress.level}/30</p>
+              <p className="stat-value">{progress.level}/{progress.total_levels}</p>
             </div>
           </motion.div>
 
@@ -111,7 +124,7 @@ const Dashboard = ({ user, onLogout }) => {
             </div>
             <div className="stat-info">
               <h3>Levels Completed</h3>
-              <p className="stat-value">{progress.completed_levels?.length || 0}/30</p>
+              <p className="stat-value">{progress.completed_levels?.length || 0}/{progress.total_levels}</p>
             </div>
           </motion.div>
 
@@ -140,48 +153,31 @@ const Dashboard = ({ user, onLogout }) => {
         >
           <div className="activity-header">
             <div>
-              <h3>
-                {progress.total_queries || 0} queries solved in the last year
-              </h3>
+              <h3>{progress.total_queries || 0} queries solved this month</h3>
               <p className="activity-subtitle">Keep building your SQL skills every day</p>
             </div>
           </div>
-          <div className="heatmap-container">
-            <CalendarHeatmap
-              startDate={new Date(new Date().setFullYear(new Date().getFullYear() - 1))}
-              endDate={new Date()}
-              values={getHeatmapData()}
-              classForValue={(value) => {
-                if (!value) return 'color-empty';
-                if (value.count < 3) return 'color-scale-1';
-                if (value.count < 6) return 'color-scale-2';
-                if (value.count < 10) return 'color-scale-3';
-                return 'color-scale-4';
-              }}
-              tooltipDataAttrs={(value) => {
-                return {
-                  'data-tip': value.date
-                    ? `${value.count} queries on ${value.date}`
-                    : 'No activity'
-                };
-              }}
-            />
-          </div>
-          <div className="heatmap-legend">
-            <div className="legend-left">
-              <span>Learn how we count queries</span>
-            </div>
-            <div className="legend-right">
-              <span>Less</span>
-              <div className="legend-boxes">
-                <div className="legend-box color-empty"></div>
-                <div className="legend-box color-scale-1"></div>
-                <div className="legend-box color-scale-2"></div>
-                <div className="legend-box color-scale-3"></div>
-                <div className="legend-box color-scale-4"></div>
+
+          <div className="month-grid" style={{ gridTemplateColumns: `repeat(${Math.min(progress.total_levels || 30, 15)}, 1fr)` }}>
+            {getMonthGrid().map((day) => (
+              <div
+                key={day.date}
+                className="month-cell"
+                style={{ background: getColor(day.count) }}
+                title={day.count > 0 ? `${day.count} queries on ${day.label}` : day.label}
+              >
+                <span className="cell-day">{new Date(day.date + 'T00:00:00').getDate()}</span>
+                {day.count > 0 && <span className="cell-count">{day.count}</span>}
               </div>
-              <span>More</span>
-            </div>
+            ))}
+          </div>
+
+          <div className="month-legend">
+            <span>Less</span>
+            {['#e5e7eb','#86efac','#4ade80','#16a34a','#14532d'].map(c => (
+              <div key={c} className="legend-box" style={{ background: c }} />
+            ))}
+            <span>More</span>
           </div>
         </motion.div>
 
