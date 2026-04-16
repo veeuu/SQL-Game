@@ -11,6 +11,7 @@ DB_CONFIG = {
     "database": os.getenv("PG_DB",   "sql_dungeon"),
     "user":     os.getenv("PG_USER", "postgres"),
     "password": os.getenv("PG_PASS", ""),
+    "sslmode":  "require" if os.getenv("PG_HOST", "localhost") != "localhost" else "disable",
 }
 
 def get_conn():
