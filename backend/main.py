@@ -508,6 +508,19 @@ async def websocket_endpoint(ws: WebSocket, room_id: str, user_id: int):
                 await manager.broadcast(room_id, {
                     "type": "opponent_submitted", "user_id": user_id
                 }, exclude=user_id)
+            elif data.get("type") == "start_match":
+                # Creator started the match — update room status and broadcast
+                try:
+                    conn = __import__('database').get_conn()
+                    c = conn.cursor()
+                    c.execute("UPDATE rooms SET status='started' WHERE id=%s", (room_id,))
+                    conn.commit()
+                    c.close(); conn.close()
+                except:
+                    pass
+                await manager.broadcast(room_id, {
+                    "type": "match_started"
+                }, exclude=user_id)
     except WebSocketDisconnect:
         manager.disconnect(room_id, user_id)
         await manager.broadcast(room_id, {"type": "player_disconnected", "user_id": user_id})
