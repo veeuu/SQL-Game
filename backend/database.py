@@ -106,20 +106,24 @@ def init_db():
         )
     """)
 
-    # ── Challenge dataset tables (players run queries against these) ─────────
+    # ── Challenge schema with sample data (players run queries against this) ──
     c.execute("CREATE SCHEMA IF NOT EXISTS challenge")
 
+    # ── customers ──────────────────────────────────────────────────────────────
     c.execute("""
         CREATE TABLE IF NOT EXISTS challenge.customers (
             id SERIAL PRIMARY KEY,
             name TEXT,
             email TEXT,
             city TEXT,
+            country TEXT,
             age INTEGER,
-            joined_date TEXT
+            joined_date TEXT,
+            is_premium BOOLEAN DEFAULT FALSE
         )
     """)
 
+    # ── orders ─────────────────────────────────────────────────────────────────
     c.execute("""
         CREATE TABLE IF NOT EXISTS challenge.orders (
             id SERIAL PRIMARY KEY,
@@ -128,10 +132,25 @@ def init_db():
             category TEXT,
             amount NUMERIC,
             quantity INTEGER,
+            status TEXT,
             order_date TEXT
         )
     """)
 
+    # ── products ───────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.products (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            category TEXT,
+            price NUMERIC,
+            stock INTEGER,
+            supplier_id INTEGER,
+            rating NUMERIC
+        )
+    """)
+
+    # ── employees ──────────────────────────────────────────────────────────────
     c.execute("""
         CREATE TABLE IF NOT EXISTS challenge.employees (
             id SERIAL PRIMARY KEY,
@@ -139,17 +158,116 @@ def init_db():
             department TEXT,
             salary NUMERIC,
             manager_id INTEGER,
-            hire_date TEXT
+            hire_date TEXT,
+            city TEXT
         )
     """)
 
+    # ── departments ────────────────────────────────────────────────────────────
     c.execute("""
-        CREATE TABLE IF NOT EXISTS challenge.products (
+        CREATE TABLE IF NOT EXISTS challenge.departments (
             id SERIAL PRIMARY KEY,
             name TEXT,
-            category TEXT,
-            price NUMERIC,
-            stock INTEGER
+            budget NUMERIC,
+            location TEXT,
+            head_id INTEGER
+        )
+    """)
+
+    # ── students ───────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.students (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            age INTEGER,
+            grade TEXT,
+            gpa NUMERIC,
+            major TEXT,
+            enrollment_year INTEGER
+        )
+    """)
+
+    # ── courses ────────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.courses (
+            id SERIAL PRIMARY KEY,
+            title TEXT,
+            department TEXT,
+            credits INTEGER,
+            instructor TEXT,
+            max_students INTEGER
+        )
+    """)
+
+    # ── enrollments ────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.enrollments (
+            id SERIAL PRIMARY KEY,
+            student_id INTEGER,
+            course_id INTEGER,
+            grade TEXT,
+            semester TEXT,
+            year INTEGER
+        )
+    """)
+
+    # ── movies ─────────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.movies (
+            id SERIAL PRIMARY KEY,
+            title TEXT,
+            genre TEXT,
+            release_year INTEGER,
+            director TEXT,
+            rating NUMERIC,
+            box_office NUMERIC
+        )
+    """)
+
+    # ── reviews ────────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.reviews (
+            id SERIAL PRIMARY KEY,
+            movie_id INTEGER,
+            reviewer TEXT,
+            score INTEGER,
+            comment TEXT,
+            review_date TEXT
+        )
+    """)
+
+    # ── suppliers ──────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.suppliers (
+            id SERIAL PRIMARY KEY,
+            name TEXT,
+            country TEXT,
+            contact_email TEXT,
+            rating NUMERIC
+        )
+    """)
+
+    # ── transactions ───────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.transactions (
+            id SERIAL PRIMARY KEY,
+            account_id INTEGER,
+            type TEXT,
+            amount NUMERIC,
+            balance_after NUMERIC,
+            transaction_date TEXT
+        )
+    """)
+
+    # ── accounts ───────────────────────────────────────────────────────────────
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS challenge.accounts (
+            id SERIAL PRIMARY KEY,
+            owner TEXT,
+            account_type TEXT,
+            balance NUMERIC,
+            opened_date TEXT,
+            is_active BOOLEAN DEFAULT TRUE
         )
     """)
 

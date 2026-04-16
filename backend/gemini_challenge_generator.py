@@ -37,16 +37,26 @@ def generate_challenge(level: int, round_number: int = 1):
 Level: {level} | Round: {round_number} | Difficulty: {cfg['difficulty']}
 SQL Concept: {cfg['concept']}
 
-EXACT table schemas (use ONLY these column names, no others):
+EXACT table schemas available (use ONLY these column names, no others):
 
-challenge.customers  → customers(id, name, email, city, age, joined_date)
-challenge.orders     → orders(id, customer_id, product, category, amount, quantity, order_date)
-challenge.employees  → employees(id, name, department, salary, manager_id, hire_date)
-challenge.products   → products(id, name, category, price, stock)
+customers(id, name, email, city, country, age, joined_date, is_premium)
+orders(id, customer_id, product, category, amount, quantity, status, order_date)
+products(id, name, category, price, stock, supplier_id, rating)
+employees(id, name, department, salary, manager_id, hire_date, city)
+departments(id, name, budget, location, head_id)
+students(id, name, age, grade, gpa, major, enrollment_year)
+courses(id, title, department, credits, instructor, max_students)
+enrollments(id, student_id, course_id, grade, semester, year)
+movies(id, title, genre, release_year, director, rating, box_office)
+reviews(id, movie_id, reviewer, score, comment, review_date)
+suppliers(id, name, country, contact_email, rating)
+transactions(id, account_id, type, amount, balance_after, transaction_date)
+accounts(id, owner, account_type, balance, opened_date, is_active)
 
 Rules:
 - Use ONLY the column names listed above — do not invent column names
-- Use ONLY the table names listed above
+- Pick the most interesting tables for the concept being tested
+- Vary the tables used across rounds (don't always use customers/orders)
 - Test the concept: {cfg['concept']}
 - Fun dungeon/quest/adventure theme
 - Valid PostgreSQL query using the exact schema above

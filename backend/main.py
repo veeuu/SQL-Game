@@ -249,9 +249,9 @@ def submit_query(data: QuerySubmit, authorization: Optional[str] = Header(None))
         err = str(e)
         # Give a helpful message for common errors
         if "does not exist" in err and "column" in err:
-            return {"success": False, "error": f"Column not found. Available columns: customers(id,name,email,city,age,joined_date), orders(id,customer_id,product,category,amount,quantity,order_date), employees(id,name,department,salary,manager_id,hire_date), products(id,name,category,price,stock)"}
+            return {"success": False, "error": f"Column not found. Check available schemas in the challenge."}
         if "does not exist" in err and "relation" in err:
-            return {"success": False, "error": f"Table not found. Available tables: customers, orders, employees, products"}
+            return {"success": False, "error": f"Table not found. Available tables: customers, orders, products, employees, departments, students, courses, enrollments, movies, reviews, suppliers, transactions, accounts"}
         return {"success": False, "error": err}
 
     from gemini_challenge_generator import validate_query
@@ -321,9 +321,9 @@ async def duo_submit(data: QuerySubmit, authorization: Optional[str] = Header(No
         dc.close(); conn.close()
         err = str(e)
         if "does not exist" in err and "column" in err:
-            return {"success": False, "error": f"Column not found. Available columns: customers(id,name,email,city,age,joined_date), orders(id,customer_id,product,category,amount,quantity,order_date), employees(id,name,department,salary,manager_id,hire_date), products(id,name,category,price,stock)"}
+            return {"success": False, "error": f"Column not found. Check available schemas in the challenge."}
         if "does not exist" in err and "relation" in err:
-            return {"success": False, "error": f"Table not found. Available tables: customers, orders, employees, products"}
+            return {"success": False, "error": f"Table not found. Available tables: customers, orders, products, employees, departments, students, courses, enrollments, movies, reviews, suppliers, transactions, accounts"}
         return {"success": False, "error": err}
 
     from gemini_challenge_generator import validate_query
