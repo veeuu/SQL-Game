@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { API, WS } from '../config';
+import { API } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Users, Bot, ArrowRight, X, Copy, Check } from 'lucide-react';

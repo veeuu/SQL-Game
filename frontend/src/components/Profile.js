@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Star, Zap } from 'lucide-react';
+import { ArrowLeft, Award, Star } from 'lucide-react';
 import './Profile.css';
 
 const Profile = ({ user, onLogout }) => {

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { API, WS } from '../config';
+import { API } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, CheckCircle, ArrowLeft } from 'lucide-react';

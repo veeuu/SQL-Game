@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { API, WS } from '../config';
+import { API } from '../config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Lock, User, Target } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -17,7 +17,7 @@ const Login = ({ onLogin }) => {
   const [isRegister, setIsRegister] = useState(false);
   const [step, setStep] = useState(1); // 1 = form, 2 = challenge picker
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
-  const [challengeDays, setChallengeDays] = useState(null);
+  const [challengeDays, setChallengeDays] = useState(null); // eslint-disable-line no-unused-vars
   const [customDays, setCustomDays] = useState('');
 
   const handleFormSubmit = async (e) => {

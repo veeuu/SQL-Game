@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Trophy, Zap, Timer, RotateCcw } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Zap, Timer, RotateCcw } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { API } from '../config';
@@ -27,11 +27,10 @@ const SQLMatch = ({ onFinish }) => {
       .sort(() => Math.random() - 0.5);
   };
 
-  const [cards, setCards] = useState(buildCards);
+  const [cards] = useState(buildCards);
   const [flipped, setFlipped] = useState([]);
   const [matched, setMatched] = useState([]);
   const [moves, setMoves] = useState(0);
-  const [done, setDone] = useState(false);
 
   const handleFlip = (card) => {
     if (flipped.length === 2 || flipped.find(c => c.id === card.id) || matched.includes(card.pairId)) return;
@@ -44,7 +43,6 @@ const SQLMatch = ({ onFinish }) => {
         setMatched(newMatched);
         setFlipped([]);
         if (newMatched.length === 6) {
-          setDone(true);
           const score = Math.max(6, 20 - moves);
           setTimeout(() => onFinish(score, 'sql-match'), 800);
         }

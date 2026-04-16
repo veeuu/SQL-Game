@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { API, WS } from '../config';
+import { API } from '../config';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Map, Gamepad2, User, Trophy, Zap, Target, LogOut, Play } from 'lucide-react';
