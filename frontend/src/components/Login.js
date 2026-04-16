@@ -32,7 +32,7 @@ const Login = ({ onLogin }) => {
 
   const doLogin = async () => {
     try {
-      const res = await axios.post('${API}/api/login', formData);
+      const res = await axios.post(`${API}/api/login`, formData);
       toast.success('Welcome back, Adventurer!');
       onLogin(res.data.token, res.data.username, res.data.total_levels);
     } catch (err) {
@@ -42,7 +42,7 @@ const Login = ({ onLogin }) => {
 
   const doRegister = async (days) => {
     try {
-      const res = await axios.post('${API}/api/register', {
+      const res = await axios.post(`${API}/api/register`, {
         ...formData,
         total_levels: days,
       });

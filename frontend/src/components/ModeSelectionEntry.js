@@ -35,7 +35,7 @@ const ModeSelectionEntry = ({ onClose }) => {
       }
       
       const response = await axios.post(
-        '${API}/api/room/create',
+        `${API}/api/room/create`,
         { mode: 'duo', level: 1 },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -69,7 +69,7 @@ const ModeSelectionEntry = ({ onClose }) => {
       }
       
       await axios.post(
-        '${API}/api/room/join',
+        `${API}/api/room/join`,
         { room_id: joinRoomId },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
