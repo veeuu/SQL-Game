@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import axios from 'axios';
+import { API } from './config';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import DungeonMap from './components/DungeonMap';
@@ -16,11 +18,24 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
-    const total_levels = parseInt(localStorage.getItem('total_levels') || '30');
     if (token && username) {
-      setUser({ token, username, total_levels });
+      // Restore session and refresh progress from server
+      axios.get(`${API}/api/progress/${username}`)
+        .then(res => {
+          const total_levels = res.data.total_levels || 30;
+          localStorage.setItem('total_levels', total_levels);
+          setUser({ token, username, total_levels });
+        })
+        .catch(() => {
+          // Token may be expired — clear session
+          localStorage.removeItem('token');
+          localStorage.removeItem('username');
+          localStorage.removeItem('total_levels');
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   const handleLogin = (token, username, totalLevels = 30) => {
@@ -33,6 +48,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('total_levels');
     setUser(null);
   };
 

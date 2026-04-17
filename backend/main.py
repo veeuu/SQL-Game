@@ -140,12 +140,22 @@ def login(user: UserLogin):
     if not row or not bcrypt.verify(user.password, row[2]):
         c.close(); conn.close()
         raise HTTPException(status_code=401, detail="Invalid credentials")
-    # Get total_levels
-    c.execute("SELECT total_levels FROM progress WHERE user_id=%s", (row[0],))
+    # Get full progress to restore session
+    c.execute("SELECT level, score, energy, total_levels FROM progress WHERE user_id=%s", (row[0],))
     prog = c.fetchone()
-    total_levels = prog[0] if prog else 30
+    level = prog[0] if prog else 1
+    score = prog[1] if prog else 0
+    energy = prog[2] if prog else 100
+    total_levels = prog[3] if prog else 30
     c.close(); conn.close()
-    return {"token": create_token(row[0], row[1]), "username": row[1], "total_levels": total_levels}
+    return {
+        "token": create_token(row[0], row[1]),
+        "username": row[1],
+        "total_levels": total_levels,
+        "level": level,
+        "score": score,
+        "energy": energy,
+    }
 
 # ─── Progress Routes ──────────────────────────────────────────────────────────
 

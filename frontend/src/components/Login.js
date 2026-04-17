@@ -33,7 +33,7 @@ const Login = ({ onLogin }) => {
   const doLogin = async () => {
     try {
       const res = await axios.post(`${API}/api/login`, formData);
-      toast.success('Welcome back, Adventurer!');
+      toast.success(`Welcome back, ${res.data.username}! Resuming from level ${res.data.level}...`);
       onLogin(res.data.token, res.data.username, res.data.total_levels);
     } catch (err) {
       toast.error(err.response?.data?.detail || 'Authentication failed');
