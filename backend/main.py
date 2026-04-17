@@ -163,7 +163,7 @@ def login(user: UserLogin):
 def get_progress(username: str):
     conn = get_conn()
     c = conn.cursor()
-    c.execute("""SELECT p.level, p.score, p.energy, u.id, p.total_levels
+    c.execute("""SELECT p.level, p.score, p.energy, u.id, p.total_levels, u.created_at
                  FROM progress p JOIN users u ON p.user_id=u.id
                  WHERE u.username=%s""", (username,))
     row = c.fetchone()
@@ -175,13 +175,23 @@ def get_progress(username: str):
     c.execute("SELECT COALESCE(SUM(queries_solved),0) FROM daily_activity WHERE user_id=%s", (row[3],))
     total_queries = c.fetchone()[0]
     c.close(); conn.close()
+    # Normalize created_at to a date string (YYYY-MM-DD)
+    created_at = row[5]
+    if created_at:
+        try:
+            joined_date = str(created_at)[:10]
+        except:
+            joined_date = datetime.now().date().isoformat()
+    else:
+        joined_date = datetime.now().date().isoformat()
     return {
         "level": row[0],
         "score": row[1],
         "energy": row[2],
         "total_levels": row[4],
         "completed_levels": completed,
-        "total_queries": int(total_queries)
+        "total_queries": int(total_queries),
+        "joined_date": joined_date,
     }
 
 @app.get("/api/activity/{username}")

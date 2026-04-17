@@ -10,7 +10,7 @@ import './Dashboard.css';
 const Dashboard = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100, total_queries: 0, completed_levels: [], total_levels: 30 });
+  const [progress, setProgress] = useState({ level: 1, score: 0, energy: 100, total_queries: 0, completed_levels: [], total_levels: 30, joined_date: null });
   const [activity, setActivity] = useState([]);
   const [matches, setMatches] = useState([]);
   const [showModeSelection, setShowModeSelection] = useState(false);
@@ -48,20 +48,34 @@ const Dashboard = ({ user, onLogout }) => {
   };
 
   const getMonthGrid = () => {
-    const days_to_show = progress.total_levels || 30;
+    const total = progress.total_levels || 30;
     const map = {};
     activity.forEach(a => { map[a.date] = a.queries; });
 
+    // Anchor grid to the user's join date so each cell = a real calendar day
+    const startDate = progress.joined_date
+      ? new Date(progress.joined_date + 'T00:00:00')
+      : new Date();
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const days = [];
-    for (let i = 0; i < days_to_show; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
+    for (let i = 0; i < total; i++) {
+      const d = new Date(startDate);
+      d.setDate(startDate.getDate() + i);
       const key = d.toISOString().split('T')[0];
+      const isPast = d <= today;
+      const isToday = key === today.toISOString().split('T')[0];
+      const isFuture = d > today;
       days.push({
         date: key,
         label: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
         count: map[key] || 0,
         dayIndex: i + 1,
+        isPast,
+        isToday,
+        isFuture,
       });
     }
     return days;
@@ -173,12 +187,18 @@ const Dashboard = ({ user, onLogout }) => {
             {getMonthGrid().map((day) => (
               <div
                 key={day.date}
-                className="month-cell"
-                style={{ background: getColor(day.count) }}
-                title={day.count > 0 ? `${day.count} queries on ${day.label}` : day.label}
+                className={`month-cell${day.isToday ? ' today' : ''}${day.isFuture ? ' future' : ''}`}
+                style={{ background: day.isFuture ? '#f3f4f6' : getColor(day.count) }}
+                title={
+                  day.isFuture
+                    ? `Day ${day.dayIndex} — ${day.label} (upcoming)`
+                    : day.count > 0
+                    ? `${day.count} queries on ${day.label}`
+                    : `Day ${day.dayIndex} — ${day.label} (no activity)`
+                }
               >
                 <span className="cell-day">{day.dayIndex}</span>
-                {day.count > 0 && <span className="cell-count">{day.count}</span>}
+                {!day.isFuture && day.count > 0 && <span className="cell-count">{day.count}</span>}
               </div>
             ))}
           </div>

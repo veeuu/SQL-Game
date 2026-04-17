@@ -370,6 +370,21 @@
   z-index: 1;
 }
 
+.month-cell.today {
+  outline: 3px solid #a855f7;
+  outline-offset: 1px;
+  z-index: 1;
+}
+
+.month-cell.future {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.month-cell.future:hover {
+  transform: none;
+}
+
 .cell-day {
   font-size: 11px;
   font-weight: 600;
