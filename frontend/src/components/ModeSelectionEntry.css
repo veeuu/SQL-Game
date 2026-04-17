@@ -300,3 +300,66 @@
   height: 45px;
   cursor: pointer;
 }
+
+/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .mode-entry-overlay {
+    padding: 12px;
+    align-items: flex-start;
+    padding-top: 20px;
+    overflow-y: auto;
+  }
+
+  .mode-entry-card {
+    padding: 24px 16px;
+    border-radius: 20px;
+  }
+
+  .mode-entry-title { font-size: 30px; }
+  .mode-entry-subtitle { font-size: 15px; }
+  .mode-entry-header { margin-bottom: 24px; }
+
+  .mode-options-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .mode-card {
+    padding: 28px 20px;
+  }
+
+  .mode-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 14px;
+  }
+
+  .mode-icon { width: 36px; height: 36px; }
+
+  .mode-card h2 { font-size: 24px; }
+  .mode-card > p { font-size: 14px; }
+  .mode-features li { font-size: 13px; padding: 8px 0; }
+
+  .mode-select-btn {
+    font-size: 16px;
+    padding: 13px 20px;
+  }
+
+  .duo-room-options {
+    padding: 20px 0;
+  }
+
+  .btn-large {
+    font-size: 16px;
+    padding: 15px 20px;
+  }
+
+  .room-id-box {
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .room-id-box code { font-size: 22px; }
+}

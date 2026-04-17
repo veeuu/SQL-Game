@@ -460,3 +460,55 @@
 .back-btn:hover {
   color: #374151;
 }
+
+/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .login-container {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .login-card {
+    padding: 28px 20px;
+    border-radius: 24px;
+    width: 100%;
+  }
+
+  .login-header h1 {
+    font-size: 32px;
+    letter-spacing: 1px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .login-btn {
+    font-size: 16px;
+    padding: 16px;
+  }
+
+  .challenge-options {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .challenge-option {
+    padding: 14px 8px;
+  }
+
+  .opt-emoji { font-size: 26px; }
+  .opt-label { font-size: 15px; }
+  .opt-desc  { font-size: 11px; }
+  .opt-levels { font-size: 12px; }
+
+  .custom-input-row {
+    flex-direction: column;
+  }
+
+  .custom-input-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

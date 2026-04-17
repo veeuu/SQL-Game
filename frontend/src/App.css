@@ -266,3 +266,30 @@ body {
   background: linear-gradient(white, white) padding-box,
               linear-gradient(135deg, #a855f7 0%, #ec4899 100%) border-box;
 }
+
+/* ─── Mobile Global Fixes ───────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .btn {
+    padding: 11px 18px;
+    font-size: 14px;
+    border-radius: 12px;
+    touch-action: manipulation;
+  }
+
+  .input-field {
+    font-size: 16px; /* prevents iOS zoom on focus */
+    padding: 12px 14px;
+  }
+
+  .input-group .input-field {
+    font-size: 16px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+}

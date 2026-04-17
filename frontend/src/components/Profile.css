@@ -194,3 +194,54 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .profile-container {
+    padding: 12px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .profile-header h1 { font-size: 26px; }
+
+  .profile-card {
+    padding: 28px 20px;
+    border-width: 3px;
+  }
+
+  .avatar-circle {
+    width: 90px;
+    height: 90px;
+    font-size: 36px;
+  }
+
+  .profile-card h2 { font-size: 24px; }
+  .profile-title { font-size: 15px; padding: 6px 16px; }
+
+  .achievements-section {
+    padding: 20px 16px;
+    border-width: 3px;
+  }
+
+  .achievements-section h3 { font-size: 20px; margin-bottom: 20px; }
+
+  .achievements-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .achievement-card {
+    padding: 18px 12px;
+    border-width: 3px;
+  }
+
+  .achievement-icon { font-size: 32px; margin-bottom: 10px; }
+  .achievement-card h4 { font-size: 14px; }
+  .achievement-card p { font-size: 12px; }
+}

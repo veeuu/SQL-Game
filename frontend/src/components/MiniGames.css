@@ -300,3 +300,70 @@
   border: 1px solid rgba(255,255,255,0.8);
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
+
+/* ─── Mobile Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .mg-header {
+    padding: 14px 16px;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .mg-header h1 { font-size: 20px; }
+  .mg-header h2 { font-size: 17px; }
+
+  .mg-grid {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    gap: 16px;
+  }
+
+  .mg-game-card { padding: 20px; }
+  .mg-game-card h3 { font-size: 17px; }
+
+  .mg-game {
+    padding: 0 14px;
+  }
+
+  .mg-game-info {
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+
+  .mg-options {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .mg-match-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .mg-flip-card {
+    font-size: 11px;
+    padding: 6px;
+  }
+
+  .mg-flip-card:not(.flipped) { font-size: 18px; }
+
+  .mg-question {
+    font-size: 15px;
+    padding: 16px;
+  }
+
+  .mg-word-bank { gap: 8px; }
+  .mg-word { font-size: 13px; padding: 7px 12px; }
+
+  .mg-builder-actions {
+    flex-direction: column;
+  }
+
+  .mg-builder-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
